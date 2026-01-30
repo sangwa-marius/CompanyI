@@ -42,10 +42,10 @@ const getProjectsByName = async (req,res,next)=>{
         .populate('company', 'name code email phone address')
         .populate('manager',' names email phone  ')
         .populate('members', 'names email phone');
-        if(!projects){
+        if(projects.length === 0){
             const error = new Error('No project found');
             error.status = 404;
-            next(error);
+             return next(error);
         }
 
         res.status(200).json({
@@ -54,10 +54,10 @@ const getProjectsByName = async (req,res,next)=>{
             projects
         })
     } catch (e) {
-        const error = new Error('Failed to get');
+        console.log(e.message)
+        const error = new Error('Failed to get project');
         error.status = 500;
         next(error);
-        console.log(e.message)
         
     }
 }
