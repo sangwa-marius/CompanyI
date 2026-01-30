@@ -12,7 +12,7 @@ const projectSchema = new mongoose.Schema({
         required: true
     },
 
-    manage:{
+    manager:{
         type:mongoose.Schema.Types.ObjectId,
         ref: 'Employee',
         required: true
