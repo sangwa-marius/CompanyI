@@ -5,6 +5,7 @@ const employees = new mongoose.Schema({
     names:{
         type:String,
         required:true,
+        trim: true
 
     },
     email:{
@@ -26,16 +27,9 @@ const employees = new mongoose.Schema({
 
     department:{
         type:mongoose.SchemaTypes.ObjectId,
-        ref:'department'
+        ref:'Department',
+        required: true
     },
-
-    createdAt:{
-        type:Date,
-        default:()=>Date.now(),
-        immutable:true
-    },
-
-
-})
+}, {timestamps: true})
 
 module.exports = mongoose.model('Employee',employees);
