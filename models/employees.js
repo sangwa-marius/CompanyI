@@ -15,14 +15,11 @@ const employees = new mongoose.Schema({
         lowercase:true
     },
 
-    age:{
-        type:Number,
-        required:true,
-    },
-
-    salary:{
-        type:Number,
-        required:true,
+    phone: String,
+    company:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'Company',
+        required: true
     },
 
     department:{
@@ -30,6 +27,21 @@ const employees = new mongoose.Schema({
         ref:'Department',
         required: true
     },
+
+    role:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'Role',
+        required: true
+    },
+
+    status:{
+        type: String,
+        enum: ['ACTIVE','INACTIVE','SUSPENDED'],
+        default: 'ACTIVE'
+    },
+
+    hiredAt:Date,
+    
 }, {timestamps: true})
 
 module.exports = mongoose.model('Employee',employees);
