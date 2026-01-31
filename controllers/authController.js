@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const register = async (req, res, next) => {
     try {
         const { username, email, password } = req.body;
-        if (!username || email.length === 0) {
+        if (!username ||!email ||!password) {
             return res.status(400).json({ message: "username,email and password are requred" });
         }
         const user = await User.find({ email: email });
@@ -37,8 +37,7 @@ const login = async (req, res, next) => {
         const user = await User.findOne({ email });
 
         if (bcrypt.compareSync(password, user.password)) {
-            const token = jwt.sign({ user:"goal" }, process.env.SUPER_SECRET_KEY);
-            console.log(token)
+            const token = jwt.sign({ user }, process.env.SUPER_SECRET_KEY);
             return res.status(200).json({ message: "Login successfull",token : token });
 
         } else {
