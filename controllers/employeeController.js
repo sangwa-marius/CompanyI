@@ -2,40 +2,62 @@ const employee = require ('../models/employees')
 
 const getAllEmployees = async (req,res,next)=>{
     try {
-        const allEmployees = await employee.find();
-        res.status(200).json(allEmployees)
-    } catch (error) {
-        console.log(error.message);
+        const allEmployees = await employee.find()
+        .populate('company','name code email phone')
+        .populate('department','name ')
+        .populate('role','name permissions ');
+        res.status(200).json(allEmployees);
+    } catch (e) {
+        e.status = 500;
+        return next(e);
     }
 }
 
-const searchEmployeesByName = async (req, res, next) => {
-  const search = req.query.name;  // get from query
 
-  if (!search) {
-    return res.status(400).json({ message: 'Please provide a name to search' });
+const searchEmployeesByName = async (req, res, next) => {
+  const search = req.query.name;
+
+  if (search.length ===0) {
+    const error = new Error('please provide a name');
+    error.status = 400;
+    return next(error);
   }
 
   try {
-    const employees = await employee.find({
-      names: { $regex: search, $options: 'i' }  // matches your schema
-    });
+    const employees = await employee.find({names: { $regex: search, $options: 'i' }})
+    .populate('company','name code email phone')
+    .populate('department','name ')
+    .populate('role','name permissions ');
 
     if (employees.length === 0) {
-      return res.status(404).json({ message: 'Employee not found' });
+      const error = new Error('No employee found');
+      error.status = 404;
+      next(error);
     }
-
     return res.status(200).json(employees);
-
-  } catch (error) {
-    console.error(error.message);
-    return res.status(500).json({ message: 'Server error' });
+  } catch (e) {
+      e.status = 500;
+      return next(e);
   }
 };
 
 const addEmployee = async (req,res, next)=>{
     try {
-        const newEmployee = req.body;
+        const {name ,email, company,department, role, status, hirdAt} = req.body;
+        if(!name || !email || !company || !department || !role){
+          const error = new Error('name, email,company,department and role are required ');
+          error.status =400;
+          return next(error);
+        }
+        if(!mongoose.Types.ObjectId.isValid(company)){
+          const error = new Error('company id not valid');
+          error.status = 400;
+          return next(error);
+        }else if(!mongoose.Types.ObjectId.isValid(department)){
+          const error = new Error('department id is not valid');
+          error.status = 400;
+          next(error);
+        }else if(!mongoose.Types.ObjectId.isValid(department))
         await employee.create(newEmployee);
         res.status(201).json({message:'employee added successfully'})
     } catch (error) {

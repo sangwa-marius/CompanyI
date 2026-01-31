@@ -5,7 +5,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/employee:
+ * /api/v1/employee:
  *   get:
  *     summary: Get All Employess
  *     tags:
@@ -18,7 +18,7 @@ router.get('/', getAllEmployees);
 
 /**
  * @swagger
- * /api/employee/search:
+ * /api/v1/employee/search:
  *  get:
  *    summary: Get employees by names
  *    tags:
@@ -38,7 +38,7 @@ router.get('/search', searchEmployeesByName);  // use query, not param
 
 /**
  * @swagger
- * /api/employee/addOne:
+ * /api/v1/employee/addOne:
  *   post:
  *     summary: Add one Employee
  *     tags:
@@ -59,10 +59,18 @@ router.get('/search', searchEmployeesByName);  // use query, not param
  *                 type: string
  *               email:
  *                 type: string
- *               age:
- *                 type: number
- *               salary:
- *                 type: number
+ *               phone:
+ *                 type: string
+ *               company:
+ *                 type: string
+ *               department:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *               hiredAt:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Employee added successfully
@@ -71,7 +79,7 @@ router.post('/addOne', addEmployee);
 
 /**
  * @swagger
- * /api/employee/manyEmployees:
+ * /api/v1/employee/manyEmployees:
  *   post:
  *     summary: Add Many employees
  *     tags:
@@ -89,10 +97,18 @@ router.post('/addOne', addEmployee);
  *                     type: string
  *                   email:
  *                     type: string
- *                   age:
- *                     type: number
- *                   salary:
- *                     type: number
+ *                   phone:
+ *                     type: string
+ *                   compny:
+ *                     type: string
+ *                   department:
+ *                     type: string
+ *                   role:
+ *                     type: string
+ *                   status:
+ *                     type: string
+ *                   hiredAt:
+ *                    type: string
  *       responses:
  *         200:
  *           descrption: Employees added successfully    
@@ -102,7 +118,7 @@ router.post('/manyEmployees',addMannyEmployees);
 
 /**
  * @swagger
- * /api/employee/delete/{names}:
+ * /api/v1/employee/delete/{names}:
  *   delete:
  *     summary: Delete one employee by names
  *     tags:

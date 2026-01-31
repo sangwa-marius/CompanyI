@@ -2,11 +2,11 @@
   "name": "express",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "ejs": "nodemon ejs.js",
     "start": "node server.js",
-    "dev": "node --watch --env-file=.env server",
+    "dev": "nodemon ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -23,6 +23,7 @@
     "express-flash": "^0.0.2",
     "express-session": "^1.19.0",
     "joi": "^18.0.2",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.5",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",

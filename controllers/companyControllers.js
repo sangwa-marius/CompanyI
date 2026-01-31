@@ -27,7 +27,7 @@ const getAllCompanies = async (req,res, next) =>{
 const getCompaniesByName = async (req,res,next) =>{
     try {
         const name = req.params.name;
-        if(name.length ===0){
+        if(!name){
             const error = new Error('Name is required');
             error.status = 400;
             return next(error);
