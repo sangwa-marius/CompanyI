@@ -1,5 +1,4 @@
 const Company = require('../models/company');
-const { findOne } = require('../models/employees');
 
 
 const getAllCompanies = async (req,res, next) =>{
@@ -18,9 +17,8 @@ const getAllCompanies = async (req,res, next) =>{
             })
         }
     } catch (e) {
-        const error = new Error(e.message);
-        error.status = 500;
-        return next(error);
+        e.status = 500;
+        return next(e);
         
     }
 }
@@ -44,9 +42,8 @@ const getCompaniesByName = async (req,res,next) =>{
              return 
         }
     } catch (e) {
-        const error =new Error(e.message);
-        error.status = 500;
-        return next(error);
+        e.status = 500;
+        return next(e);
     }
 }
 
@@ -68,13 +65,12 @@ const addCompany = async (req,res, next)=>{
                 address,
                 isActive
             })
-            res.status(202).json({message: "Company added successfully"}).json(company);
-            return 
+            return res.status(201).json({message: "Company added successfully",company})
+            
         }
     } catch (e) {
-        const error = new Error(e.message);
-        error.status = 500;
-        return next(error);   
+        e.status = 500;
+        return next(e);   
     }
 }
 
@@ -103,9 +99,25 @@ const updateCompanyByName = async (req, res , next) =>{
             })
         }
     } catch (e) {
-        const error = new Error(e.message);
-        error.status = 500;
-        return next(error);
+        e.status = 500;
+        return next(e);
+    }
+}
+
+
+const deletecompanyByName = async (req,res,next) =>{
+    try {
+        const name = req.params.name;
+        if(name.length ===0){
+            const error = new Error('The company name should be provided');
+            error.status = 400;
+            return next(error);
+        }
+        await Company.findOneAndDelete({name});
+        return res.status(200).json({message:"Company deleted successfully"});
+    } catch (e) {
+        e.status =500;
+        return next(e)     
     }
 }
 
@@ -114,5 +126,6 @@ module.exports = {
     getCompaniesByName,
     updateCompanyByName,
     addCompany,
+    deletecompanyByName
     
 }
