@@ -1,33 +1,33 @@
-const employee = require ('../models/employees')
+const employee = require('../models/employees')
 
-const getAllEmployees = async (req,res,next)=>{
-    try {
-        const allEmployees = await employee.find()
-        .populate('company','name code email phone')
-        .populate('department','name ')
-        .populate('role','name permissions ');
-        res.status(200).json(allEmployees);
-    } catch (e) {
-        e.status = 500;
-        return next(e);
-    }
+const getAllEmployees = async (req, res, next) => {
+  try {
+    const allEmployees = await employee.find()
+      .populate('company', 'name code email phone')
+      .populate('department', 'name ')
+      .populate('role', 'name permissions ');
+    res.status(200).json(allEmployees);
+  } catch (e) {
+    e.status = 500;
+    return next(e);
+  }
 }
 
 
 const searchEmployeesByName = async (req, res, next) => {
-  const search = req.query.name;
+  const search = req.params.search;
 
-  if (search.length ===0) {
+  if (!search) {
     const error = new Error('please provide a name');
     error.status = 400;
     return next(error);
   }
 
   try {
-    const employees = await employee.find({names: { $regex: search, $options: 'i' }})
-    .populate('company','name code email phone')
-    .populate('department','name ')
-    .populate('role','name permissions ');
+    const employees = await employee.find({ names: { $regex: search, $options: 'i' } })
+      .populate('company', 'name code email phone')
+      .populate('department', 'name ')
+      .populate('role', 'name permissions ');
 
     if (employees.length === 0) {
       const error = new Error('No employee found');
@@ -36,70 +36,78 @@ const searchEmployeesByName = async (req, res, next) => {
     }
     return res.status(200).json(employees);
   } catch (e) {
-      e.status = 500;
-      return next(e);
+    e.status = 500;
+    return next(e);
   }
 };
 
-const addEmployee = async (req,res, next)=>{
-    try {
-        const {name ,email, company,department, role, status, hirdAt} = req.body;
-        if(!name || !email || !company || !department || !role){
-          const error = new Error('name, email,company,department and role are required ');
-          error.status =400;
-          return next(error);
-        }
-        if(!mongoose.Types.ObjectId.isValid(company)){
-          const error = new Error('company id not valid');
-          error.status = 400;
-          return next(error);
-        }else if(!mongoose.Types.ObjectId.isValid(department)){
-          const error = new Error('department id is not valid');
-          error.status = 400;
-          next(error);
-        }else if(!mongoose.Types.ObjectId.isValid(department))
-        await employee.create(newEmployee);
-        res.status(201).json({message:'employee added successfully'})
-    } catch (error) {
-        console.log(error.message)
-        
-    }
-}
-
-const addMannyEmployees = async (req,res)=>{
-  const newEmployees = req.body;
+const addEmployee = async (req, res, next) => {
   try {
-    await employee.insertMany(newEmployees);
-    res.status(201).json({Message:"Employees added successfully"})
+    const newEmployee = await employee.create(req.body)
+      .populate([
+        { path: 'company', select: 'name code email phone' },
+        { path: 'department', select: 'name' },
+        { path: 'role', select: 'name permissions' }
+      ])
+
+    res.status(201).json({ message: "Employee added successfully", newEmployee })
   } catch (error) {
-    console.log(error.message)
+    return next(error);
+
   }
 }
 
-const deleteEmployee = async (req,res)=>{
-  const names = req.params.names;
-  if(!names){
-    return  res.status(400).json({Message:"you should add a name please"})
-  }
+const updateEmployeeById = async (req, res, next) => {
   try {
-    const employe = await employee.findOne({names:names}); 
-    if(!employe){
-      return res.status(404).json({Message:"Employee not found"});
+    const id = req.params.id;
+    if (!id) {
+      const error = new Error('Provide the id');
+      error.status = 400;
+      return next(error);
     }
-  
-    await employee.deleteOne({names:names});
-    res.status(200).json({Message:"Employee deleted from the database successfully"})
-    
+
+    if (!await employee.findOne({ id }) === 0) {
+      const error = new Error('No Employee found');
+      error.status = 400;
+      return next(error);
+    }
+    const newEmployee = await employee.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true, runValidators: true }
+    ).populate([
+      { path: 'company', select: 'name code email phone' },
+      { path: 'department', select: 'name' },
+      { path: 'role', select: 'name permissions' }
+    ]);
+
+    res.status(200).json({ message: "Employee updated", newEmployee: newEmployee });
+
   } catch (error) {
-    console.log(error)
-    
+    return next(error);
+  }
+}
+
+const deleteEmployeeById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!id) {
+      const error = new Error('provide the id');
+      error.status = 400;
+      return next(error);
+    }
+    await employee.findByIdAndDelete(id);
+    res.status(200).json({ message: "Employee deleted" })
+  } catch (error) {
+    return next(error)
+
   }
 }
 module.exports = {
-    getAllEmployees,
-    searchEmployeesByName,
-    addEmployee,
-    addMannyEmployees,
-    deleteEmployee
+  getAllEmployees,
+  searchEmployeesByName,
+  addEmployee,
+  updateEmployeeById,
+  deleteEmployeeById
 }
 
