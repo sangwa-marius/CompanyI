@@ -7,9 +7,9 @@ const addDepartmentSchema = joi.object({
 });
 
 const updateDepartmentByIdSchema = joi.object({
-    name: joi.string().required(),
-    company: joi.string().required(),
-    manager: joi.string()
+    name: joi.string().trim(),
+    company: joi.string().trim(),
+    manager: joi.string().trim()
 })
 
 

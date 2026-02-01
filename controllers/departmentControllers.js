@@ -1,8 +1,5 @@
 const Department = require('../models/department');
 
-
-
-
 const getAllDepartments = async (req, res, next) => {
     try {
         const departments = await Department.find()
@@ -43,7 +40,6 @@ const getDepartmentsByName = async (req, res, next) => {
             departments
         })
     } catch (e) {
-        e.status = 500;
         return next(e);
     }
 }
@@ -59,45 +55,39 @@ const addDepartment = async (req, res, next) => {
 
         res.status(201).json({ message: "Department added successfully" });
 
-    } catch (error) {
-        e.status = 500;
-        return next(e);
-    }
-}
-
-
-const updateDepartmentByName = async (req, res, next) => {
-    try {
-        const name = req.params.name;
-        const { company, manager } = req.body;
-
-        if (!name) {
-            const error = new Error('name is required');
-            error.status = 400;
-            retun(error)
-        }
-
-        const newDepartment = await Department.findOneAndUpdate(
-            { name },
-            { company, manager }
-        );
-        res.status(200).json({ message: "Department updated successfull" });
     } catch (e) {
-        e.status = 500;
-        return next(e);
+        return next(e)
     }
 }
 
 
-const deleteDepartmentByName = async (req, res, next) => {
+const updateDepartmentById = async (req, res, next) => {
     try {
-        const name = req.params.name;
-        if (!name) {
-            const error = new Error('name is require');
+        const id = req.params.id;
+        const newDepartment = await Department.findByIdAndUpdate(
+            id,
+            req.body,
+            { new: true, runValidators: true }
+        ).populate('company', 'name code email')
+         .populate('manager', ' name email phone');
+
+
+        res.status(200).json({ message: "Department updated successfull", newDepartment });
+    } catch (e) {
+        return next(e)
+    }
+}
+
+
+const deleteDepartmentById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        if (!id) {
+            const error = new Error('id is require');
             error.status = 400;
             return next(error);
         }
-        if (!await Department.findOne({ name })) {
+        if (!await Department.findOne({ id })) {
             const error = new Error('no department found');
             error.status = 404;
             return next(error);
@@ -108,7 +98,6 @@ const deleteDepartmentByName = async (req, res, next) => {
 
 
     } catch (e) {
-        e.status = 500;
         return next(e);
     }
 }
@@ -118,6 +107,6 @@ module.exports = {
     getAllDepartments,
     getDepartmentsByName,
     addDepartment,
-    updateDepartmentByName,
-    deleteDepartmentByName
+    updateDepartmentById,
+    deleteDepartmentById
 }
