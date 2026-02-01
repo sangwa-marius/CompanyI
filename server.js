@@ -6,7 +6,8 @@ const path = require('path');
 const project = require('./routes/projectRoutes')
 const company = require('./routes/companyRoutes');
 const department = require('./routes/departmentRoutes')
-const auth = require('./routes/userRouter')
+const auth = require('./routes/userRouter');
+const role = require('./routes/roleRoutes')
 const errorHandler = require('./middleware/error');
 const logger = require('./middleware/logger');
 const employee = require('./routes/employeeRoutes');
@@ -24,6 +25,7 @@ app.use('/api/v1', employee);
 app.use('/api/v1', project);
 app.use('/api/v1', company);
 app.use('/api/v1', department)
+app.use('/api/v1', role);
 app.use(notFound)
 app.use(errorHandler)
 app.listen(port, async () => {
