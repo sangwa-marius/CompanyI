@@ -6,7 +6,7 @@ const path = require('path');
 const project = require('./routes/projectRoutes')
 const company = require('./routes/companyRoutes');
 const department = require('./routes/departmentRoutes')
-const auth=require('./routes/userRouter')
+const auth = require('./routes/userRouter')
 const errorHandler = require('./middleware/error');
 const logger = require('./middleware/logger');
 const employee = require('./routes/employeeRoutes');
@@ -17,11 +17,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extende: false }));
 app.use(logger);
-app.use('/api-docs', swaggerUI.serve , swaggerUI.setup(swaggerSpec));
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 // app.use(express.static(path.join(__dirname, 'public')))
-app.use('/api/v1',auth)
-app.use('/api/v1/employee', employee);
-app.use('/api/v1',project);
+app.use('/api/v1', auth)
+app.use('/api/v1', employee);
+app.use('/api/v1', project);
 app.use('/api/v1', company);
 app.use('/api/v1', department)
 app.use(notFound)
