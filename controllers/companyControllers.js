@@ -17,7 +17,6 @@ const getAllCompanies = async (req,res, next) =>{
             })
         }
     } catch (e) {
-        e.status = 500;
         return next(e);
         
     }
@@ -42,7 +41,6 @@ const getCompaniesByName = async (req,res,next) =>{
              return 
         }
     } catch (e) {
-        e.status = 500;
         return next(e);
     }
 }
@@ -69,54 +67,40 @@ const addCompany = async (req,res, next)=>{
             
         }
     } catch (e) {
-        e.status = 500;
         return next(e);   
     }
 }
 
 
-const updateCompanyByName = async (req, res , next) =>{
+const updateCompanyById = async (req, res , next) =>{
     try {
-        const name = req.params.name;
-        const {code, email,phone, address,isActive} = req.body;
-        if(!code){
-            const error = new Error('The school code is required');
-            error.status = 400;
-            return next(error);
-        }
-       else{
-            const newCompany = await Company.findOneAndUpdate({name},{
-                code,
-                email, 
-                phone,
-                address,
-                isActive
-            })
+        const id = req.params.id;
+        const newCompany = await Company.findByIdAndUpdate(
+            id,
+            req.body,
+            {new: true, runValidators: true}
+        );
 
-            res.status(200).json({
-                message: "Company updated successfully",
-                NewCompany : newCompany
-            })
-        }
+        res.status(200).json({message: "Company updated",newCompany: newCompany})
+        
+        
     } catch (e) {
-        e.status = 500;
         return next(e);
     }
 }
 
 
-const deletecompanyByName = async (req,res,next) =>{
+const deletecompanyById = async (req,res,next) =>{
     try {
-        const name = req.params.name;
-        if(name.length ===0){
-            const error = new Error('The company name should be provided');
-            error.status = 400;
+        const id = req.params.id;
+        if(await Company.findOne({id}).length ===0){
+            const error = new Error('no company found');
+            error.status =404;
             return next(error);
         }
-        await Company.findOneAndDelete({name});
-        return res.status(200).json({message:"Company deleted successfully"});
-    } catch (e) {
-        e.status =500;
+        await Company.findByIdAndDelete(id);
+        res.status(200).json({message: "company deleted"})
+    } catch (e){
         return next(e)     
     }
 }
@@ -124,8 +108,8 @@ const deletecompanyByName = async (req,res,next) =>{
 module.exports = {
     getAllCompanies,
     getCompaniesByName,
-    updateCompanyByName,
     addCompany,
-    deletecompanyByName
+    updateCompanyById,
+    deletecompanyById
     
 }

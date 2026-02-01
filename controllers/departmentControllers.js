@@ -87,13 +87,13 @@ const deleteDepartmentById = async (req, res, next) => {
             error.status = 400;
             return next(error);
         }
-        if (!await Department.findOne({ id })) {
+        if (await Department.findOne({id}).length ===0) {
             const error = new Error('no department found');
             error.status = 404;
             return next(error);
         }
 
-        await Department.findOneAndDelete({ name });
+        await Department.findOneAndDelete(id);
         res.status(200).json({ message: "department deleted successfully" })
 
 
