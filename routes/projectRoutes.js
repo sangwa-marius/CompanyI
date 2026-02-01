@@ -6,10 +6,10 @@ const {addProjectSchema, updateProjectSchema} = require('../validations/projectV
 
 const router = express.Router();
 
-router.get('/project',auth,project.getAllProjects)
-router.get('/project/:name',auth, project.getProjectsByName);
-router.post('/project',auth,validate (addProjectSchema),project.addProject);
-router.put('/project/:id',auth, validate(updateProjectSchema),project.updateProjectById);
-router.delete('/project/:id',auth, project.deleteProjectById);
+router.get('/',auth,project.getAllProjects)
+router.get('/:name',auth, project.getProjectsByName);
+router.post('/',auth,validate (addProjectSchema),project.addProject);
+router.put('/:id',auth, validate(updateProjectSchema),project.updateProjectById);
+router.delete('/:id',auth, project.deleteProjectById);
 
 module.exports = router;

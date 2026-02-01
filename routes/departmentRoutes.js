@@ -6,10 +6,10 @@ const validate = require('../middleware/validator')
 const router = express.Router();
 
 
-router.get('/department', auth, department.getAllDepartments);
-router.get('/department/:name', auth, department.getDepartmentsByName);
-router.post('/department', auth, validate(departmentSchema.addDepartmentSchema), department.addDepartment);
-router.put('/department/:id', auth, validate(departmentSchema.updateDepartmentByIdSchema),department.updateDepartmentById);
-router.delete('/department/:id', auth, department.deleteDepartmentById);
+router.get('/', auth, department.getAllDepartments);
+router.get('/:name', auth, department.getDepartmentsByName);
+router.post('/', auth, validate(departmentSchema.addDepartmentSchema), department.addDepartment);
+router.put('/:id', auth, validate(departmentSchema.updateDepartmentByIdSchema),department.updateDepartmentById);
+router.delete('/:id', auth, department.deleteDepartmentById);
 
 module.exports = router;

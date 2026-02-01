@@ -37,7 +37,7 @@ router.get('/employee', auth, employee.getAllEmployees);
  *        description: OK          
  */
 
-router.get('/employee/:search', auth, employee.searchEmployeesByName);  // use query, not param
+router.get('/:search', auth, employee.searchEmployeesByName);  // use query, not param
 
 /**
  * @swagger
@@ -78,7 +78,7 @@ router.get('/employee/:search', auth, employee.searchEmployeesByName);  // use q
  *       200:
  *         description: Employee added successfully
  */
-router.post('/employee',auth,validate(addEmployeeSchema), employee.addEmployee);
+router.post('/',auth,validate(addEmployeeSchema), employee.addEmployee);
 
 /**
  * @swagger
@@ -97,7 +97,7 @@ router.post('/employee',auth,validate(addEmployeeSchema), employee.addEmployee);
  *       200:
  *         descrption: Employee deleted successfully
  */
-router.put('/employee/:id',auth, validate(updateEmployeeByIdSchema), employee.updateEmployeeById)
-router.delete('/employee/:id',auth, employee.deleteEmployeeById);
+router.put('/:id',auth, validate(updateEmployeeByIdSchema), employee.updateEmployeeById)
+router.delete('/:id',auth, employee.deleteEmployeeById);
 
 module.exports = router;

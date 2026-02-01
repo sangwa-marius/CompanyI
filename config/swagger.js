@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({quiet:true,debug:true});
 const swaggerJSDoc = require('swagger-jsdoc');
 const port = process.env.PORT;
 
