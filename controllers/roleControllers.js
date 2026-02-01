@@ -3,7 +3,7 @@ const Role = require('../models/role');
 const getAllRoles = async (req, res, next) => {
     try {
         const roles = await Role.find()
-            .popualate([
+            .populate([
                 { path: 'company', select: 'name code email phone' }
             ]);
 
@@ -21,9 +21,9 @@ const getAllRoles = async (req, res, next) => {
 
 const addRole = async (req,res,next)=>{
     try {
-        const newRole = await Role.create(req.body)
-        .populate('company');
-
+        const newRole = new Role(req.body)
+        await newRole.save();
+        await newRole.populate('company','name code email phone');
         res.status(201).json({message:"Role added successfully",newRole});
     } catch (error) {
         return next(error);
