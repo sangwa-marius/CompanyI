@@ -4,23 +4,23 @@ const departmentSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
     },
 
-    company:{
+    company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Company',
         required: true
     },
 
-    manager:{
+    manager: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee',
         required: true,
     },
-}, {timestamps: true});
+}, { timestamps: true });
 
 
-departmentSchema.index({name:1, company:1},{unique: true});
+departmentSchema.index({ name: 1, company: 1 }, { unique: true });
 
-module.exports = mongoose.model('Department',departmentSchema);
+module.exports = mongoose.model('Department', departmentSchema);
