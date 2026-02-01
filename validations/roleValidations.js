@@ -1,9 +1,18 @@
-const joi = requrie('joi');
+const joi = require('joi');
 
-const roleSchema = joi.object({
+const addRoleSchema = joi.object({
     name: joi.string().required().trim().uppercase(),
     permissions: joi.string().trim(),
     company: joi.string().required().trim()
 })
 
-module.exports = roleSchema;
+const updateRoleSchema = joi.object({
+    name: joi.string().trim().uppercase(),
+    permissions: joi.string().trim(),
+    company: joi.string().trim()
+})
+
+module.exports = {
+    addRoleSchema,
+    updateRoleSchema
+}
