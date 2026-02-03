@@ -17,7 +17,7 @@ const router = express.Router();
  *       200:
  *         description: Employees fetched successfully
  */
-router.get('/employee', auth, employee.getAllEmployees);
+router.get('/', auth, employee.getAllEmployees);
 
 /**
  * @swagger
@@ -52,11 +52,6 @@ router.get('/:search', auth, employee.searchEmployeesByName);  // use query, not
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - names
- *               - email
- *               - age
- *               - salary
  *             properties:
  *               names:
  *                 type: string
@@ -89,7 +84,7 @@ router.post('/',auth,validate(addEmployeeSchema), employee.addEmployee);
  *       - Employees
  *     parameters:
  *       - in: path
- *         name: names
+ *         name: id
  *         require: true
  *         schema:
  *           type: true
