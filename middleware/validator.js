@@ -1,5 +1,3 @@
-const joi = require('joi');
-
 const validate = (schema)=>{
     return (req,res,next) =>{
         const {error} = schema.validate(req.body,{stripUnknown: true,abortEarly:false });
