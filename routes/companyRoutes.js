@@ -35,9 +35,10 @@ router.get('/',auth,company.getAllCompanies);
  *     responses: 
  *       200:
  *         description: List of companies
- *       404: Not found
+ *       404:
+ *         description: Not found
  */
-router.get('/:name',auth,company.getCompaniesByName);
+router.get('/:name',company.getCompaniesByName);
 
 
 /**

@@ -17,27 +17,27 @@ const router = express.Router();
  *       200:
  *         description: Employees fetched successfully
  */
-router.get('/', auth, employee.getAllEmployees);
+router.get('/' , employee.getAllEmployees);
 
 /**
  * @swagger
- * /api/v1/employee/:search:
+ * /api/v1/employee/{names}:
  *  get:
  *    summary: Get employees by names
  *    tags:
  *      - Employees
  *    parameters:
- *      - in: query
- *        name: name
- *        required: true
+ *      - in: path
+ *        name: names
  *        schema:
  *          type: string
  *    responses:
  *      200:
- *        description: OK          
+ *        description: Successfully retrieved employees
+ *      
  */
 
-router.get('/:search', auth, employee.searchEmployeesByName);  // use query, not param
+router.get('/:names', employee.searchEmployeesByName);  // use query, not param
 
 /**
  * @swagger
@@ -73,7 +73,49 @@ router.get('/:search', auth, employee.searchEmployeesByName);  // use query, not
  *       200:
  *         description: Employee added successfully
  */
-router.post('/',auth,validate(addEmployeeSchema), employee.addEmployee);
+router.post('/',validate(addEmployeeSchema), employee.addEmployee);
+
+/**
+ * @swagger
+ * /api/v1/employee/{id}:
+ *   put:
+ *     summary: Update an employee by id
+ *     tags:
+ *       - Employees  
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema: 
+ *           type: string 
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             minProperties: 1
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               company:
+ *                 type: string
+ *               department:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *               hiredAt:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Employee added successfully
+ */
+router.put('/:id', validate(updateEmployeeByIdSchema), employee.updateEmployeeById)
 
 /**
  * @swagger
@@ -92,7 +134,6 @@ router.post('/',auth,validate(addEmployeeSchema), employee.addEmployee);
  *       200:
  *         descrption: Employee deleted successfully
  */
-router.put('/:id',auth, validate(updateEmployeeByIdSchema), employee.updateEmployeeById)
-router.delete('/:id',auth, employee.deleteEmployeeById);
+router.delete('/:id', employee.deleteEmployeeById);
 
 module.exports = router;
