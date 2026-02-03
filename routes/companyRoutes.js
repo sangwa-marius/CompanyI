@@ -38,7 +38,7 @@ router.get('/',auth,company.getAllCompanies);
  *       404:
  *         description: Not found
  */
-router.get('/:name',company.getCompaniesByName);
+router.get('/:name',auth,company.getCompaniesByName);
 
 
 /**
