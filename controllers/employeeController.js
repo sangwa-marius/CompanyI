@@ -1,5 +1,6 @@
 const employee = require('../models/employees')
 
+
 const getAllEmployees = async (req, res, next) => {
   try {
     const allEmployees = await employee.find()
@@ -15,16 +16,16 @@ const getAllEmployees = async (req, res, next) => {
 
 
 const searchEmployeesByName = async (req, res, next) => {
-  const search = req.params.search;
-
-  if (!search) {
-    const error = new Error('please provide a name');
-    error.status = 400;
-    return next(error);
-  }
-
+  
   try {
-    const employees = await employee.find({ names: { $regex: search, $options: 'i' } })
+    const names = req.params.names;
+  
+    if (!names) {
+      const error = new Error('please provide a name');
+      error.status = 400;
+      return next(error);
+    }
+    const employees = await employee.find({ names: { $regex: names, $options: 'i' } })
       .populate('company', 'name code email phone')
       .populate('department', 'name ')
       .populate('role', 'name permissions ');
@@ -32,8 +33,8 @@ const searchEmployeesByName = async (req, res, next) => {
     if (employees.length === 0) {
       const error = new Error('No employee found');
       error.status = 404;
-      next(error);
-    }
+      return next(error);
+   }
     return res.status(200).json(employees);
   } catch (e) {
     e.status = 500;
@@ -43,8 +44,9 @@ const searchEmployeesByName = async (req, res, next) => {
 
 const addEmployee = async (req, res, next) => {
   try {
-    const newEmployee = await employee.create(req.body)
-      .populate([
+    const newEmployee = new employee(req.body);
+    await newEmployee.save();
+    await newEmployee.populate([
         { path: 'company', select: 'name code email phone' },
         { path: 'department', select: 'name' },
         { path: 'role', select: 'name permissions' }
