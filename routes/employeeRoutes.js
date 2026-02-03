@@ -17,7 +17,7 @@ const router = express.Router();
  *       200:
  *         description: Employees fetched successfully
  */
-router.get('/' , employee.getAllEmployees);
+router.get('/' ,auth, employee.getAllEmployees);
 
 /**
  * @swagger
@@ -37,7 +37,7 @@ router.get('/' , employee.getAllEmployees);
  *      
  */
 
-router.get('/:names', employee.searchEmployeesByName);  // use query, not param
+router.get('/:names',auth, employee.searchEmployeesByName);  // use query, not param
 
 /**
  * @swagger
@@ -73,7 +73,7 @@ router.get('/:names', employee.searchEmployeesByName);  // use query, not param
  *       200:
  *         description: Employee added successfully
  */
-router.post('/',validate(addEmployeeSchema), employee.addEmployee);
+router.post('/',auth,validate(addEmployeeSchema), employee.addEmployee);
 
 /**
  * @swagger
@@ -115,7 +115,7 @@ router.post('/',validate(addEmployeeSchema), employee.addEmployee);
  *       200:
  *         description: Employee added successfully
  */
-router.put('/:id', validate(updateEmployeeByIdSchema), employee.updateEmployeeById)
+router.put('/:id',auth, validate(updateEmployeeByIdSchema), employee.updateEmployeeById)
 
 /**
  * @swagger
@@ -134,6 +134,6 @@ router.put('/:id', validate(updateEmployeeByIdSchema), employee.updateEmployeeBy
  *       200:
  *         descrption: Employee deleted successfully
  */
-router.delete('/:id', employee.deleteEmployeeById);
+router.delete('/:id',auth, employee.deleteEmployeeById);
 
 module.exports = router;
