@@ -13,8 +13,25 @@ const options = {
         servers: [
             {
                 url :`http://localhost:${port}`,
-                descrption:"Local serever",
+                descrption:" Development serever",
 
+            }
+        ],
+
+        components:{
+            securitySchemes:{
+                beererSchemes:{
+                    type:'http',
+                    scheme: 'beerer',
+                    beererFormat:'JWT',
+                    descrption:'Enter JWT token '
+                },
+            },
+        },
+
+        security:[
+            {
+                beererAuth: []
             }
         ]
 
