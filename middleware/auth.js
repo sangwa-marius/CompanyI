@@ -4,11 +4,12 @@ require('dotenv').config();
 
  const isauthenticated = async (req, res, next) => {
     try {
-        const token = req.headers.token
+        const token = req.headers.authorization.split(" ")[1]
         if (!token) {
             res.status(401).json({ message: "Unauthorized" })
             return
         }
+        console.log(token)
 
         const decoded= jwt.verify(token, process.env.SUPER_SECRET_KEY)
         // if (!user) {

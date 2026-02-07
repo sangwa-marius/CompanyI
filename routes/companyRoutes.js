@@ -11,6 +11,7 @@ const {addCompanySchema, updateCompanyByIdSchema} = require('../validations/comp
  *     summary: Get all companies
  *     tags:
  *       - Companies
+ *     
  *     responses:
  *       200:
  *         description: List of all companies

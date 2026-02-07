@@ -1,44 +1,41 @@
-require("dotenv").config({quiet:true,debug:true});
-const swaggerJSDoc = require('swagger-jsdoc');
+require("dotenv").config({ quiet: true, debug: true });
+const swaggerJSDoc = require("swagger-jsdoc");
 const port = process.env.PORT;
 
 const options = {
-    definition:{
-        openapi: "3.0.0",
-        info:{
-            title: "A very simple swagger api tester ",
-            version: "1.0.0",
-            descrption: "This is a simple swagger user interface for testing my apis",
-        },
-        servers: [
-            {
-                url :`http://localhost:${port}`,
-                descrption:" Development serever",
-
-            }
-        ],
-
-        components:{
-            securitySchemes:{
-                beererSchemes:{
-                    type:'http',
-                    scheme: 'beerer',
-                    beererFormat:'JWT',
-                    descrption:'Enter JWT token '
-                },
-            },
-        },
-
-        security:[
-            {
-                beererAuth: []
-            }
-        ]
-
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "A very simple swagger api tester",
+      version: "1.0.0",
+      description: "This is a simple swagger user interface for testing my APIs",
     },
-    apis:["./routes/*.js"]
+    servers: [
+      {
+        url: `http://localhost:${port}`,
+        description: "Development server",
+      },
+    ],
+
+    components: {
+      securitySchemes: {
+        bearerAuth: {              // ✅ consistent name
+          type: "http",
+          scheme: "bearer",        // ✅ correct scheme
+          bearerFormat: "JWT",
+          description: "Enter JWT token",
+        },
+      },
+    },
+
+    security: [
+      {
+        bearerAuth: [],             // ✅ matches securitySchemes
+      },
+    ],
+  },
+  apis: ["./routes/*.js"],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
-
 module.exports = swaggerSpec;
