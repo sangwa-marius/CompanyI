@@ -104,6 +104,8 @@ const updateProjectById = async (req, res, next) => {
          .populate('manager', ' names email phone  ')
          .populate('members', 'names email phone');
 
+         res.status(200).json({message:"project updated successfull",newProject})
+
     } catch (e) {
         return next(e);
     }

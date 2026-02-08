@@ -19,9 +19,9 @@ const options = {
 
     components: {
       securitySchemes: {
-        bearerAuth: {              // ✅ consistent name
+        bearerAuth: {              
           type: "http",
-          scheme: "bearer",        // ✅ correct scheme
+          scheme: "bearer",        
           bearerFormat: "JWT",
           description: "Enter JWT token",
         },
@@ -30,7 +30,7 @@ const options = {
 
     security: [
       {
-        bearerAuth: [],             // ✅ matches securitySchemes
+        bearerAuth: [],             
       },
     ],
   },

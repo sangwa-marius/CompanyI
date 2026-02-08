@@ -2,7 +2,9 @@ const joi = require('joi');
 
 
 const addEmployeeSchema = joi.object({
-    names: joi.string().trim().required().messages({'string.names':'names must be a string','any.require':'names are required'}),
+    names: joi.string().trim().required().messages({
+        'string.names':'names must be a string',
+        'any.require':'names are required'}),
     email: joi.string().email().required().trim().lowercase().messages({
         'string.email':'Invalid email format',
         'any.require':'Email is required'
@@ -20,7 +22,9 @@ const addEmployeeSchema = joi.object({
 
 
 const updateEmployeeByIdSchema = joi.object({
-    names: joi.string().trim().messages({'string.names':'names must be a string','any.require':'names are required'}),
+    names: joi.string().trim().messages({
+        'string.names':'names must be a string',
+        'any.require':'names are required'}),
     email: joi.string().email().trim().lowercase().messages({
         'string.email':'Invalid email format',
         'any.require':'Email is required'

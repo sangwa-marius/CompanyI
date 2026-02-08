@@ -9,7 +9,8 @@ const debug = require('debug')('app:server')
 const errorHandler = require('./middleware/error');
 const notFound = require('./middleware/notFound');
 const router = require('./routes/index');
-mongoose.connect('mongodb://localhost:27017/enterprise');
+const connectDB = require('./config/db')
+connectDB();
 
 const port = process.env.PORT || 8080;
 const app = express();
