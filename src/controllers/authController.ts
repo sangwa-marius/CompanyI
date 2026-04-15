@@ -14,12 +14,15 @@ const register = async (req, res, next) => {
             return res.status(400).json({ message: "email registered" })
         }
         const hashed = await bcrypt.hash(password, 10);
-        await User.create({
+        const newUser =   await User.create({
             username,
             email,
             password: hashed
         });
-        res.status(200).json({ message: "registered successfully" })
+        res.status(200).json({
+             message: "registered successfully" ,
+             newUser
+            })
     } catch (e: any) {
         return next(e);
 
