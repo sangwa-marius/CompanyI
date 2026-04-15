@@ -1,8 +1,10 @@
 import User from '../models/users';
+import bcrypt from 'bcrypt';
+import jwt from'jsonwebtoken';
 import  dotenv from 'dotenv';
 dotenv.config();
-import bcrypt = require('bcrypt');
-import jwt = require('jsonwebtoken');
+
+
 const register = async (req, res, next) => {
     try {
         const { username, email, password } = req.body;
@@ -12,12 +14,15 @@ const register = async (req, res, next) => {
             return res.status(400).json({ message: "email registered" })
         }
         const hashed = await bcrypt.hash(password, 10);
-        await User.create({
+        const newUser =   await User.create({
             username,
             email,
             password: hashed
         });
-        res.status(200).json({ message: "registered successfully" })
+        res.status(200).json({
+             message: "registered successfully" ,
+             newUser
+            })
     } catch (e: any) {
         return next(e);
 
