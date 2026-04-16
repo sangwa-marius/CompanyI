@@ -1,6 +1,7 @@
+import { Request, Response, NextFunction } from 'express';
 import Department from '../models/department';
 
-const getAllDepartments = async (req, res, next) => {
+const getAllDepartments = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const departments = await Department.find()
             .populate('company', 'name code email')
@@ -20,7 +21,7 @@ const getAllDepartments = async (req, res, next) => {
 }
 
 
-const getDepartmentsByName = async (req, res, next) => {
+const getDepartmentsByName = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const name = req.params.name;
         if (!name) {
@@ -44,7 +45,7 @@ const getDepartmentsByName = async (req, res, next) => {
     }
 }
 
-const addDepartment = async (req, res, next) => {
+const addDepartment = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { name, company, manager } = req.body;
         const newDepartment = await Department.create({
@@ -53,7 +54,7 @@ const addDepartment = async (req, res, next) => {
             manager
         })
 
-        res.status(201).json({ message: "Department added successfully" });
+        res.status(201).json({ message: "Department added successfully", newDepartment });
 
     } catch (e: any) {
         return next(e)
@@ -61,7 +62,7 @@ const addDepartment = async (req, res, next) => {
 }
 
 
-const updateDepartmentById = async (req, res, next) => {
+const updateDepartmentById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = req.params.id;
         const newDepartment = await Department.findByIdAndUpdate(
@@ -69,7 +70,7 @@ const updateDepartmentById = async (req, res, next) => {
             req.body,
             { new: true, runValidators: true }
         ).populate('company', 'name code email')
-         .populate('manager', ' name email phone');
+            .populate('manager', ' name email phone');
 
 
         res.status(200).json({ message: "Department updated successfull", newDepartment });
@@ -79,9 +80,9 @@ const updateDepartmentById = async (req, res, next) => {
 }
 
 
-const deleteDepartmentById = async (req, res, next) => {
+const deleteDepartmentById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const id = req.params.id;
+        const { id } = req.params as { id: string };
         if (!id) {
             const error: any = new Error('id is require');
             error.status = 400;
@@ -93,7 +94,7 @@ const deleteDepartmentById = async (req, res, next) => {
             return next(error);
         }
 
-        await Department.findOneAndDelete(id);
+        await Department.findByIdAndDelete(id);
         res.status(200).json({ message: "department deleted successfully" })
 
 
@@ -103,8 +104,10 @@ const deleteDepartmentById = async (req, res, next) => {
 }
 
 
-export {getAllDepartments,
+export {
+    getAllDepartments,
     getDepartmentsByName,
     addDepartment,
     updateDepartmentById,
-    deleteDepartmentById};
+    deleteDepartmentById
+};
