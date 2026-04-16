@@ -30,21 +30,22 @@ const register = async (req, res, next) => {
 }
 
 const login = async (req, res, next) => {
-    console.log(process.env.SUPER_SECRET_KEY)
     try {
         const { email, password } = req.body;
         if (!email || !password) {
             return res.status(400).json({ message: "email and password are require" })
         }
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select("+password email username")
+        console.log(user)
+        if (!user) return res.status(404).json({ message: "User not found" })
 
-        if (bcrypt.compareSync(password, user.password)) {
+        if (await bcrypt.compare(password, user.password)) {
             const token = jwt.sign(
-                { user },
+                { id: user._id, email: user.email },
                 process.env.SUPER_SECRET_KEY,
-                { expiresIn: '1h' }
+                { expiresIn: '7d' }
             );
-            return res.status(200).json({ message: "Login successfull", token: token });
+            return res.status(200).json({ message: "Login successfull", token });
 
         } else {
             return res.status(400).json({ message: "Invalid password" })
