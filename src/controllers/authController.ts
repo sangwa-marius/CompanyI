@@ -1,7 +1,7 @@
 import User from '../models/users';
 import bcrypt from 'bcrypt';
-import jwt from'jsonwebtoken';
-import  dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 dotenv.config();
 
 
@@ -14,15 +14,15 @@ const register = async (req, res, next) => {
             return res.status(400).json({ message: "email registered" })
         }
         const hashed = await bcrypt.hash(password, 10);
-        const newUser =   await User.create({
+        const newUser = await User.create({
             username,
             email,
             password: hashed
         });
         res.status(200).json({
-             message: "registered successfully" ,
-             newUser
-            })
+            message: "registered successfully",
+            newUser
+        })
     } catch (e: any) {
         return next(e);
 
@@ -40,7 +40,7 @@ const login = async (req, res, next) => {
 
         if (bcrypt.compareSync(password, user.password)) {
             const token = jwt.sign(
-                { user }, 
+                { user },
                 process.env.SUPER_SECRET_KEY,
                 { expiresIn: '1h' }
             );
@@ -57,5 +57,5 @@ const login = async (req, res, next) => {
 
 }
 
-export {register, login};
+export { register, login };
 
