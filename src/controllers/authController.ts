@@ -1,3 +1,4 @@
+import { Request, Response, NextFunction} from 'express';
 import User from '../models/users';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -5,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 
-const register = async (req, res, next) => {
+const register = async (req:Request, res:Response, next:NextFunction) => {
     try {
         const { username, email, password } = req.body;
         const user = await User.find({ email: email });
@@ -29,7 +30,7 @@ const register = async (req, res, next) => {
     }
 }
 
-const login = async (req, res, next) => {
+const login = async (req:Request, res:Response, next:NextFunction) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
