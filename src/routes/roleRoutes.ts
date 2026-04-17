@@ -19,7 +19,7 @@ const router = express.Router();
  *         description: Not found
  */
 
-router.get('/',auth,role.getAllRoles);
+router.get('/:companyId',auth,role.getCompanyRoles);
 /**
  * @swagger
  * /api/v1/role:
