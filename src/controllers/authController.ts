@@ -7,15 +7,21 @@ import { CustomError } from '../utils/customError';
 dotenv.config();
 
 
-const register = async (req:Request, res:Response, next:NextFunction) => {
+const register = async (
+    req:Request<{},{},{username:string, email:string, password:string}>, 
+    res:Response, 
+    next:NextFunction
+) => {
     try {
-        const { username, email, password } = req.body;
-        const user = await User.find({ email: email });
-        if (user.length > 0) {
-            console.log(user)
-            return res.status(400).json({ message: "email registered" })
+        let { username, email, password } = req.body;
+        const user = await User.findOne({ email: email });
+        if (user) {
+            const err = new CustomError("Email already registered",400)
+            next(err)
+            return;
         }
         const hashed = await bcrypt.hash(password, 10);
+       
         const newUser = await User.create({
             username,
             email,
