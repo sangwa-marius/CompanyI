@@ -1,7 +1,7 @@
+import { Request, Response, NextFunction } from 'express';
 import Project from '../models/project';
-import mongoose from 'mongoose';
 
-const getAllProjects = async (req, res, next) => {
+const getAllProjects = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const projects = await Project.find()
             .populate('company', 'name code email phone address')
@@ -30,7 +30,7 @@ const getAllProjects = async (req, res, next) => {
 
 
 
-const getProjectsByName = async (req, res, next) => {
+const getProjectsByName = async (req: Request<{ name: string }>, res: Response, next: NextFunction) => {
     try {
         const name = req.params.name;
         if (!name) {
@@ -65,7 +65,7 @@ const getProjectsByName = async (req, res, next) => {
 
 
 
-const addProject = async (req, res, next) => {
+const addProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const newProject = new Project(req.body);
         await newProject.save();
@@ -80,7 +80,7 @@ const addProject = async (req, res, next) => {
 }
 
 
-const updateProjectById = async (req, res, next) => {
+const updateProjectById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     try {
         const id = req.params.id;
         if (!id) {
@@ -100,10 +100,10 @@ const updateProjectById = async (req, res, next) => {
             req.body,
             { new: true, runValidators: true }
         ).populate('company', 'name code email phone address')
-         .populate('manager', ' names email phone  ')
-         .populate('members', 'names email phone');
+            .populate('manager', ' names email phone  ')
+            .populate('members', 'names email phone');
 
-         res.status(200).json({message:"project updated successfull",newProject})
+        res.status(200).json({ message: "project updated successfull", newProject })
 
     } catch (e: any) {
         return next(e);
@@ -112,31 +112,33 @@ const updateProjectById = async (req, res, next) => {
 }
 
 
-const deleteProjectById = async (req, res, next) => {
+const deleteProjectById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     try {
-       const id = req.params.id;
-       if(!id){
-        const error: any = new Error('Provide the id');
-        error.status = 400;
-        return next(error);
-       }
+        const id = req.params.id;
+        if (!id) {
+            const error: any = new Error('Provide the id');
+            error.status = 400;
+            return next(error);
+        }
 
-       if (!(await Project.findOne({ id }))){
-        const error: any = new Error(`No project with Id ${id}`);
-        error.status = 400;
-        return next(error);
-       }
+        if (!(await Project.findOne({ id }))) {
+            const error: any = new Error(`No project with Id ${id}`);
+            error.status = 400;
+            return next(error);
+        }
 
-       await Project.findByIdAndDelete(id);
-       res.status(200).json({message: "project deleted"})
+        await Project.findByIdAndDelete(id);
+        res.status(200).json({ message: "project deleted" })
     } catch (e: any) {
         return next(e);
 
     }
 }
 
-export {getAllProjects,
+export {
+    getAllProjects,
     getProjectsByName,
     addProject,
     updateProjectById,
-    deleteProjectById};
+    deleteProjectById
+};

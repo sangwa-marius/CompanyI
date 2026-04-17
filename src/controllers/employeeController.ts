@@ -1,7 +1,8 @@
+import { Request, Response, NextFunction } from 'express';
 import employee from '../models/employees';
 
 
-const getAllEmployees = async (req, res, next) => {
+const getAllEmployees = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const allEmployees = await employee.find()
       .populate('company', 'name code email phone')
@@ -15,17 +16,20 @@ const getAllEmployees = async (req, res, next) => {
 }
 
 
-const searchEmployeesByName = async (req, res, next) => {
-  
+const searchEmployeesByName = async (
+  req: Request<{ name: string }, {}, {}, {}>,
+  res: Response,
+  next: NextFunction) => {
+
   try {
-    const names = req.params.names;
-  
-    if (!names) {
+    const name = req.params.name;
+
+    if (!name) {
       const error: any = new Error('please provide a name');
       error.status = 400;
       return next(error);
     }
-    const employees = await employee.find({ names: { $regex: names, $options: 'i' } })
+    const employees = await employee.find({ names: { $regex: name, $options: 'i' } })
       .populate('company', 'name code email phone')
       .populate('department', 'name ')
       .populate('role', 'name permissions ');
@@ -34,7 +38,7 @@ const searchEmployeesByName = async (req, res, next) => {
       const error: any = new Error('No employee found');
       error.status = 404;
       return next(error);
-   }
+    }
     return res.status(200).json(employees);
   } catch (e: any) {
     e.status = 500;
@@ -42,15 +46,19 @@ const searchEmployeesByName = async (req, res, next) => {
   }
 };
 
-const addEmployee = async (req, res, next) => {
+const addEmployee = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const newEmployee = new employee(req.body);
     await newEmployee.save();
     await newEmployee.populate([
-        { path: 'company', select: 'name code email phone' },
-        { path: 'department', select: 'name' },
-        { path: 'role', select: 'name permissions' }
-      ])
+      { path: 'company', select: 'name code email phone' },
+      { path: 'department', select: 'name' },
+      { path: 'role', select: 'name permissions' }
+    ])
 
     res.status(201).json({ message: "Employee added successfully", newEmployee })
   } catch (error: any) {
@@ -59,7 +67,7 @@ const addEmployee = async (req, res, next) => {
   }
 }
 
-const updateEmployeeById = async (req, res, next) => {
+const updateEmployeeById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
     if (!id) {
@@ -68,7 +76,7 @@ const updateEmployeeById = async (req, res, next) => {
       return next(error);
     }
 
-    if (!(await employee.findOne({ id }))) {
+    if (!(await employee.findOne({ _id: id }))) {
       const error: any = new Error('No Employee found');
       error.status = 400;
       return next(error);
@@ -90,7 +98,7 @@ const updateEmployeeById = async (req, res, next) => {
   }
 }
 
-const deleteEmployeeById = async (req, res, next) => {
+const deleteEmployeeById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
     if (!id) {
@@ -105,8 +113,10 @@ const deleteEmployeeById = async (req, res, next) => {
 
   }
 }
-export {getAllEmployees,
+export {
+  getAllEmployees,
   searchEmployeesByName,
   addEmployee,
   updateEmployeeById,
-  deleteEmployeeById};
+  deleteEmployeeById
+};

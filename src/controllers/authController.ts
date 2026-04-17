@@ -1,11 +1,12 @@
+import { Request, Response, NextFunction} from 'express';
 import User from '../models/users';
 import bcrypt from 'bcrypt';
-import jwt from'jsonwebtoken';
-import  dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 dotenv.config();
 
 
-const register = async (req, res, next) => {
+const register = async (req:Request, res:Response, next:NextFunction) => {
     try {
         const { username, email, password } = req.body;
         const user = await User.find({ email: email });
@@ -14,37 +15,38 @@ const register = async (req, res, next) => {
             return res.status(400).json({ message: "email registered" })
         }
         const hashed = await bcrypt.hash(password, 10);
-        const newUser =   await User.create({
+        const newUser = await User.create({
             username,
             email,
             password: hashed
         });
         res.status(200).json({
-             message: "registered successfully" ,
-             newUser
-            })
+            message: "registered successfully",
+            newUser
+        })
     } catch (e: any) {
         return next(e);
 
     }
 }
 
-const login = async (req, res, next) => {
-    console.log(process.env.SUPER_SECRET_KEY)
+const login = async (req:Request, res:Response, next:NextFunction) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
             return res.status(400).json({ message: "email and password are require" })
         }
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select("+password email username")
+        console.log(user)
+        if (!user) return res.status(404).json({ message: "User not found" })
 
-        if (bcrypt.compareSync(password, user.password)) {
+        if (await bcrypt.compare(password, user.password)) {
             const token = jwt.sign(
-                { user }, 
+                { id: user._id, email: user.email },
                 process.env.SUPER_SECRET_KEY,
-                { expiresIn: '1h' }
+                { expiresIn: '7d' }
             );
-            return res.status(200).json({ message: "Login successfull", token: token });
+            return res.status(200).json({ message: "Login successfull", token });
 
         } else {
             return res.status(400).json({ message: "Invalid password" })
@@ -57,5 +59,5 @@ const login = async (req, res, next) => {
 
 }
 
-export {register, login};
+export { register, login };
 
