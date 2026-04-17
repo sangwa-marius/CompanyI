@@ -5,7 +5,6 @@ import morgan from 'morgan';
 import errorHandler from './middleware/error';
 import notFound from './middleware/notFound';
 import router from './routes/index';
-
 import connectDB from './config/db';
 connectDB();
 
