@@ -3,6 +3,7 @@ import User from '../models/users';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { CustomError } from '../utils/customError';
 dotenv.config();
 
 
@@ -37,8 +38,11 @@ const login = async (req:Request, res:Response, next:NextFunction) => {
             return res.status(400).json({ message: "email and password are require" })
         }
         const user = await User.findOne({ email }).select("+password email username")
-        console.log(user)
-        if (!user) return res.status(404).json({ message: "User not found" })
+        if (!user){
+            const err  = new CustomError("User not found",404);
+            next (err)
+            return
+        }
 
         if (await bcrypt.compare(password, user.password)) {
             const token = jwt.sign(
@@ -49,7 +53,9 @@ const login = async (req:Request, res:Response, next:NextFunction) => {
             return res.status(200).json({ message: "Login successfull", token });
 
         } else {
-            return res.status(400).json({ message: "Invalid password" })
+            const err = new CustomError("Invalid password",400);
+            next(err)
+            return 
         }
     } catch (e: any) {
         return next(e)
