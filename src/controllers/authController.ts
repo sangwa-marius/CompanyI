@@ -1,20 +1,27 @@
-import { Request, Response, NextFunction} from 'express';
+import { Request, Response, NextFunction } from 'express';
 import User from '../models/users';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { CustomError } from '../utils/customError';
 dotenv.config();
 
 
-const register = async (req:Request, res:Response, next:NextFunction) => {
+const register = async (
+    req: Request<{}, {}, { username: string, email: string, password: string }>,
+    res: Response,
+    next: NextFunction
+) => {
     try {
-        const { username, email, password } = req.body;
-        const user = await User.find({ email: email });
-        if (user.length > 0) {
-            console.log(user)
-            return res.status(400).json({ message: "email registered" })
+        let { username, email, password } = req.body;
+        const user = await User.findOne({ email: email });
+        if (user) {
+            const err = new CustomError("Email already registered", 400)
+            next(err)
+            return;
         }
         const hashed = await bcrypt.hash(password, 10);
+
         const newUser = await User.create({
             username,
             email,
@@ -30,15 +37,25 @@ const register = async (req:Request, res:Response, next:NextFunction) => {
     }
 }
 
-const login = async (req:Request, res:Response, next:NextFunction) => {
+const login = async (
+    req: Request<{},{},{email:string, password:string}>, 
+    res: Response, 
+    next: NextFunction
+) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-            return res.status(400).json({ message: "email and password are require" })
+            const err = new CustomError("email and password are require",400);
+            next(err);
+            return;
         }
-        const user = await User.findOne({ email }).select("+password email username")
-        console.log(user)
-        if (!user) return res.status(404).json({ message: "User not found" })
+        const user = await User.findOne({ email }).select("+password email username");
+        const loggedInUser = await User.findOne({email}).select("-createdAt -updatedAt -__v");
+        if (!user) {
+            const err = new CustomError("User not found", 404);
+            next(err);
+            return;
+        }
 
         if (await bcrypt.compare(password, user.password)) {
             const token = jwt.sign(
@@ -46,10 +63,16 @@ const login = async (req:Request, res:Response, next:NextFunction) => {
                 process.env.SUPER_SECRET_KEY,
                 { expiresIn: '7d' }
             );
-            return res.status(200).json({ message: "Login successfull", token });
+            return res.status(200).json({ 
+                message: "Login successfull", 
+                token,
+                loggedInUser
+            });
 
         } else {
-            return res.status(400).json({ message: "Invalid password" })
+            const err = new CustomError("Invalid password", 400);
+            next(err)
+            return
         }
     } catch (e: any) {
         return next(e)
