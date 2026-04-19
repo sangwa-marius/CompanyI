@@ -35,9 +35,9 @@ const getCompaniesByName = async (req: Request, res: Response, next: NextFunctio
         }
         const companies = await Company.find({ name: { $regex: name, $options: 'i' } });
         if (companies.length === 0) {
-            const error: any = new Error('No companies found');
-            error.status = 404;
-            return next(error)
+            const error: any = new CustomError('No companies found',404);
+            next(error)
+            return
         } else {
             res.status(200).json({ Total: companies.length, companies });
             return
