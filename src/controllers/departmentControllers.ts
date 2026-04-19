@@ -86,13 +86,11 @@ const deleteDepartmentById = async (req: Request, res: Response, next: NextFunct
     try {
         const { id } = req.params as { id: string };
         if (!id) {
-            const error: any = new Error('id is require');
-            error.status = 400;
+            const error: any = new CustomError('id is require',400)
             return next(error);
         }
         if (!(await Department.findOne({ id }))) {
-            const error: any = new Error('no department found');
-            error.status = 404;
+            const error: any = new CustomError('no department found',404);
             return next(error);
         }
 
