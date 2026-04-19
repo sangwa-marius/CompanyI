@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Department from '../models/department';
+import { CustomError } from '../utils/customError';
 
 const getAllDepartments = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -7,7 +8,8 @@ const getAllDepartments = async (req: Request, res: Response, next: NextFunction
             .populate('company', 'name code email')
             .populate('manager', ' name email phone');
         if (departments.length === 0) {
-            return res.status(404).json({ message: "No department added yet" })
+            const err:any= new CustomError("No departments found",404);
+            return next(err)
         }
         res.status(200).json({
             Total: departments.length,
