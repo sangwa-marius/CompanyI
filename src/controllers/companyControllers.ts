@@ -29,9 +29,9 @@ const getCompaniesByName = async (req: Request, res: Response, next: NextFunctio
     try {
         const { name } = req.params as { name: string };
         if (!name) {
-            const error: any = new Error('Name is required');
-            error.status = 400;
-            return next(error);
+            const error: any = new CustomError("Name is required",400)
+            next(error);
+            return
         }
         const companies = await Company.find({ name: { $regex: name, $options: 'i' } });
         if (companies.length === 0) {
