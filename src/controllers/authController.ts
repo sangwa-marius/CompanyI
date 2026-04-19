@@ -38,19 +38,19 @@ const register = async (
 }
 
 const login = async (
-    req: Request<{},{},{email:string, password:string}>, 
-    res: Response, 
+    req: Request<{}, {}, { email: string, password: string }>,
+    res: Response,
     next: NextFunction
 ) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-            const err = new CustomError("email and password are require",400);
+            const err = new CustomError("email and password are require", 400);
             next(err);
             return;
         }
         const user = await User.findOne({ email }).select("+password email username");
-        const loggedInUser = await User.findOne({email}).select("-createdAt -updatedAt -__v");
+        const loggedInUser = await User.findOne({ email }).select("-createdAt -updatedAt -__v");
         if (!user) {
             const err = new CustomError("User not found", 404);
             next(err);
@@ -63,8 +63,8 @@ const login = async (
                 process.env.SUPER_SECRET_KEY,
                 { expiresIn: '7d' }
             );
-            return res.status(200).json({ 
-                message: "Login successfull", 
+            return res.status(200).json({
+                message: "Login successfull",
                 token,
                 loggedInUser
             });
