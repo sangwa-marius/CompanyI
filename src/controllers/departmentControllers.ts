@@ -27,15 +27,15 @@ const getDepartmentsByName = async (req: Request, res: Response, next: NextFunct
     try {
         const name = req.params.name;
         if (!name) {
-            const error: any = new Error('name is required');
-            error.status = 400;
+            const error: any = new CustomError('name is required',400);
             return next(error);
         }
         const departments = await Department.find({ name })
             .populate('company', 'name code email')
             .populate('manager', ' name email phone');
         if (departments.length === 0) {
-            return res.status(404).json({ message: "No department found" })
+            const err:any = new CustomError("No department found",404);
+            return next(err);
         }
         res.status(200).json({
             Total: departments.length,
