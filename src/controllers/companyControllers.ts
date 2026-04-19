@@ -53,8 +53,7 @@ const addCompany = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { name, code, email, phone, address, isActive } = req.body;
         if (!name || !code) {
-            const error: any = new Error("The company name  and code should be provided");
-            error.status = 400;
+            const error: any = new CustomError("The company name  and code should be provided",400);
             return next(error);
         } else {
             const company = await Company.create({
@@ -96,8 +95,7 @@ const deletecompanyById = async (req: Request, res: Response, next: NextFunction
     try {
         const id = req.params.id;
         if (!(await Company.findOne({ id }))) {
-            const error: any = new Error('no company found');
-            error.status = 404;
+            const error: any = new CustomError('no company found',404);
             return next(error);
         }
         await Company.findByIdAndDelete(id);
