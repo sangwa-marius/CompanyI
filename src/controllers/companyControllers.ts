@@ -1,5 +1,6 @@
 import Company from '../models/company';
 import { Request, Response, NextFunction } from "express"
+import { CustomError } from '../utils/customError';
 
 
 const getAllCompanies = async (req: Request, res: Response, next: NextFunction) => {
@@ -7,9 +8,9 @@ const getAllCompanies = async (req: Request, res: Response, next: NextFunction) 
         const companies = await Company.find();
 
         if (!companies) {
-            const error: any = new Error('No companies found');
-            error.status = 404;
-            return next(error)
+            const error: any = new CustomError("No Companies found",404)
+            next(error)
+            return 
         } else {
             res.status(200).json({
                 Total: companies.length,
