@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Department from '../models/department';
+import { CustomError } from '../utils/customError';
 
 const getAllDepartments = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -7,7 +8,8 @@ const getAllDepartments = async (req: Request, res: Response, next: NextFunction
             .populate('company', 'name code email')
             .populate('manager', ' name email phone');
         if (departments.length === 0) {
-            return res.status(404).json({ message: "No department added yet" })
+            const err:any= new CustomError("No departments found",404);
+            return next(err)
         }
         res.status(200).json({
             Total: departments.length,
@@ -25,15 +27,15 @@ const getDepartmentsByName = async (req: Request, res: Response, next: NextFunct
     try {
         const name = req.params.name;
         if (!name) {
-            const error: any = new Error('name is required');
-            error.status = 400;
+            const error: any = new CustomError('name is required',400);
             return next(error);
         }
         const departments = await Department.find({ name })
             .populate('company', 'name code email')
             .populate('manager', ' name email phone');
         if (departments.length === 0) {
-            return res.status(404).json({ message: "No department found" })
+            const err:any = new CustomError("No department found",404);
+            return next(err);
         }
         res.status(200).json({
             Total: departments.length,
@@ -84,13 +86,11 @@ const deleteDepartmentById = async (req: Request, res: Response, next: NextFunct
     try {
         const { id } = req.params as { id: string };
         if (!id) {
-            const error: any = new Error('id is require');
-            error.status = 400;
+            const error: any = new CustomError('id is require',400)
             return next(error);
         }
         if (!(await Department.findOne({ id }))) {
-            const error: any = new Error('no department found');
-            error.status = 404;
+            const error: any = new CustomError('no department found',404);
             return next(error);
         }
 
