@@ -11,7 +11,6 @@ const addCompanySchema  = Joi.object({
 
 const updateCompanyByIdSchema = Joi.object({
     name: Joi.string().trim(),
-    code: Joi.string().uppercase(),
     email: Joi.string().email(),
     phone: Joi.string(),
     address: Joi.string(),
