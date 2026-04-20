@@ -25,25 +25,25 @@ const getAllCompanies = async (req: Request, res: Response, next: NextFunction) 
 }
 
 
-const getCompaniesByName = async (
-    req: Request<{ name: string }>,
+const getCompany = async (
+    req: Request<{ id: string }>,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const { name } = req.params as { name: string };
-        if (!name) {
+        const { id } = req.params
+        if (!id) {
             const error: any = new CustomError("Name is required", 400)
             next(error);
             return
         }
-        const companies = await Company.find({ name: { $regex: name, $options: 'i' } });
-        if (companies.length === 0) {
+        const company = await Company.findById(id);
+        if (!company) {
             const error: any = new CustomError('No companies found', 404);
             next(error)
             return
         } else {
-            res.status(200).json({ Total: companies.length, companies });
+            res.status(200).json(company);
             return
         }
     } catch (e: any) {
@@ -123,7 +123,7 @@ const deletecompanyById = async (
 
 export {
     getAllCompanies,
-    getCompaniesByName,
+    getCompany,
     addCompany,
     updateCompanyById,
     deletecompanyById
