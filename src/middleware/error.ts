@@ -12,6 +12,7 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
   }
 
   if(err.code ===11000){
+    console.log(err)
     return res.status(400).json({message:"Duplicate entry"})
   }
 
