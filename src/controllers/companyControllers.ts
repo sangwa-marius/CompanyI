@@ -8,9 +8,9 @@ const getAllCompanies = async (req: Request, res: Response, next: NextFunction) 
         const companies = await Company.find();
 
         if (!companies) {
-            const error: any = new CustomError("No Companies found",404)
+            const error: any = new CustomError("No Companies found", 404)
             next(error)
-            return 
+            return
         } else {
             res.status(200).json({
                 Total: companies.length,
@@ -25,21 +25,25 @@ const getAllCompanies = async (req: Request, res: Response, next: NextFunction) 
 }
 
 
-const getCompaniesByName = async (req: Request, res: Response, next: NextFunction) => {
+const getCompany = async (
+    req: Request<{ id: string }>,
+    res: Response,
+    next: NextFunction
+) => {
     try {
-        const { name } = req.params as { name: string };
-        if (!name) {
-            const error: any = new CustomError("Name is required",400)
+        const { id } = req.params
+        if (!id) {
+            const error: any = new CustomError("Name is required", 400)
             next(error);
             return
         }
-        const companies = await Company.find({ name: { $regex: name, $options: 'i' } });
-        if (companies.length === 0) {
-            const error: any = new CustomError('No companies found',404);
+        const company = await Company.findById(id);
+        if (!company) {
+            const error: any = new CustomError('No companies found', 404);
             next(error)
             return
         } else {
-            res.status(200).json({ Total: companies.length, companies });
+            res.status(200).json(company);
             return
         }
     } catch (e: any) {
@@ -49,17 +53,34 @@ const getCompaniesByName = async (req: Request, res: Response, next: NextFunctio
 
 
 
-const addCompany = async (req: Request, res: Response, next: NextFunction) => {
+const addCompany = async (
+    req: any,
+    res: Response,
+    next: NextFunction
+) => {
     try {
-        const { name, code, email, phone, address, isActive } = req.body;
-        if (!name || !code) {
-            const error: any = new CustomError("The company name  and code should be provided",400);
+        const loggedInUserId = req.userId
+        const {
+            name,
+            email,
+            phone,
+            address,
+            isActive
+        } = req.body as {
+            name: string,
+            email: string,
+            address: string,
+            isActive: boolean,
+            phone: string
+        };
+        if (!name) {
+            const error: any = new CustomError("The company name  and code should be provided", 400);
             return next(error);
         } else {
             const company = await Company.create({
                 name,
-                code,
                 email,
+                owner: loggedInUserId,
                 phone,
                 address,
                 isActive
@@ -73,7 +94,11 @@ const addCompany = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 
-const updateCompanyById = async (req: Request, res: Response, next: NextFunction) => {
+const updateCompanyById = async (
+    req: Request<{ id: string }>,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const id = req.params.id;
         const newCompany = await Company.findByIdAndUpdate(
@@ -91,11 +116,15 @@ const updateCompanyById = async (req: Request, res: Response, next: NextFunction
 }
 
 
-const deletecompanyById = async (req: Request, res: Response, next: NextFunction) => {
+const deletecompanyById = async (
+    req: Request<{ id: string }>,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const id = req.params.id;
         if (!(await Company.findOne({ id }))) {
-            const error: any = new CustomError('no company found',404);
+            const error: any = new CustomError('no company found', 404);
             return next(error);
         }
         await Company.findByIdAndDelete(id);
@@ -107,7 +136,7 @@ const deletecompanyById = async (req: Request, res: Response, next: NextFunction
 
 export {
     getAllCompanies,
-    getCompaniesByName,
+    getCompany,
     addCompany,
     updateCompanyById,
     deletecompanyById

@@ -2,7 +2,6 @@ import * as Joi from 'joi';
 
 const addCompanySchema  = Joi.object({
     name: Joi.string().required().trim(),
-    code: Joi.string().required().uppercase(),
     email: Joi.string().email().messages({'string.email':'email must be a valid email'}),
     phone: Joi.string(),
     address: Joi.string(),
