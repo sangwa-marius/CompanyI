@@ -54,20 +54,21 @@ const getCompany = async (
 
 
 const addCompany = async (
-    req: Request<{}, {}, { name: string, code: string, email: string, isActive: boolean, phone: string, address: string }>,
+    req: any,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const { name, code, email, phone, address, isActive } = req.body;
-        if (!name || !code) {
+        const loggedInUserId = req.userId
+        const { name,  email, phone, address, isActive } = req.body as{name:string , email:string , address:string , isActive:boolean, phone:string};
+        if (!name) {
             const error: any = new CustomError("The company name  and code should be provided", 400);
             return next(error);
         } else {
             const company = await Company.create({
                 name,
-                code,
                 email,
+                owner:loggedInUserId,
                 phone,
                 address,
                 isActive

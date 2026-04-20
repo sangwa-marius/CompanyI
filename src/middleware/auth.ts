@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const isauthenticated = async (req, res, next) => {
+const isauthenticated = async (req:any, res, next) => {
     try {
         const authHeaders = req.headers.authorization;
         if(!authHeaders.includes("Bearer")) return res.status(401).json({message:"Invalid token format"})
@@ -12,7 +12,8 @@ const isauthenticated = async (req, res, next) => {
             res.status(401).json({ message: 'Unauthorized' });
             return;
         }
-        const decoded = jwt.verify(token, process.env.SUPER_SECRET_KEY);
+        const decoded:any= jwt.verify(token, process.env.SUPER_SECRET_KEY);
+        req.userId = decoded.id
         next();
     } catch (error: any) {
         console.error(error);
