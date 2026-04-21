@@ -5,8 +5,8 @@ import { CustomError } from '../utils/customError';
 const getAllDepartments = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const departments = await Department.find()
-            .populate('company', 'name code email')
-            .populate('manager', ' name email phone');
+            .populate('company')
+            .populate('manager');
         if (departments.length === 0) {
             const err:any= new CustomError("No departments found",404);
             return next(err)
