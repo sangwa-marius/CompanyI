@@ -22,24 +22,27 @@ const getAllDepartments = async (req: Request, res: Response, next: NextFunction
 }
 
 
-const getDepartmentsByName = async (req: Request, res: Response, next: NextFunction) => {
+const getDepartmentById = async (
+    req: Request<{id:string}>, 
+    res: Response, 
+    next: NextFunction
+) => {
     try {
-        const name = req.params.name;
-        if (!name) {
-            const error: any = new CustomError('name is required',400);
+        const id = req.params.id;
+        if (!id) {
+            const error: any = new CustomError('the id is required',400);
             return next(error);
         }
-        const departments = await Department.find({ name })
+        const department = await Department.findById(id)
             .populate('company')
             .populate('manager');
-        if (departments.length === 0) {
+        if (!department) {
             const err:any = new CustomError("No department found",404);
             return next(err);
         }
         res.status(200).json({
-            Total: departments.length,
             message: "Here are the departments found",
-            departments
+            department
         })
     } catch (e: any) {
         return next(e);
@@ -105,7 +108,7 @@ const deleteDepartmentById = async (req: Request, res: Response, next: NextFunct
 
 export {
     getAllDepartments,
-    getDepartmentsByName,
+    getDepartmentById,
     addDepartment,
     updateDepartmentById,
     deleteDepartmentById
