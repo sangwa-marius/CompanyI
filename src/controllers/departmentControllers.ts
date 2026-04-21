@@ -31,8 +31,8 @@ const getDepartmentsByName = async (req: Request, res: Response, next: NextFunct
             return next(error);
         }
         const departments = await Department.find({ name })
-            .populate('company', 'name code email')
-            .populate('manager', ' name email phone');
+            .populate('company')
+            .populate('manager');
         if (departments.length === 0) {
             const err:any = new CustomError("No department found",404);
             return next(err);
@@ -71,8 +71,8 @@ const updateDepartmentById = async (req: Request, res: Response, next: NextFunct
             id,
             req.body,
             { new: true, runValidators: true }
-        ).populate('company', 'name code email')
-            .populate('manager', ' name email phone');
+        ).populate('company')
+            .populate('manager');
 
 
         res.status(200).json({ message: "Department updated successfull", newDepartment });
