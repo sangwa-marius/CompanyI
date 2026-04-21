@@ -25,6 +25,25 @@ const getAllCompanies = async (req: Request, res: Response, next: NextFunction) 
 }
 
 
+const getYourCompanies = async(
+    req:any,
+    res:Response, 
+    next:NextFunction
+)=>{
+    try {
+        const companies = await Company.find({owner:req.userId})
+        if(companies.length ===0){
+            const err:any = new CustomError("No companies",404);
+            return next(err);
+        }
+        res.status(200).json(companies);
+    } catch (error) {
+        return next(error)
+        
+    }
+}
+
+
 const getCompany = async (
     req: Request<{ id: string }>,
     res: Response,
@@ -136,8 +155,10 @@ const deletecompanyById = async (
 
 export {
     getAllCompanies,
+    getYourCompanies,
     getCompany,
     addCompany,
     updateCompanyById,
     deletecompanyById
+
 };

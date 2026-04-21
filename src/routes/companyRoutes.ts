@@ -6,6 +6,7 @@ import validate from '../middleware/validator';
 import { addCompanySchema, updateCompanyByIdSchema } from '../validations/companyValidations';
 
 router.get('/get-all-companies',auth,company.getAllCompanies);
+router.get('/get-your-companies', auth, company.getYourCompanies)
 router.get('get-company/:id',auth,company.getCompany);
 router.post('/add-company',auth,validate(addCompanySchema),company.addCompany);
 router.put('/update-company/:id',auth,validate(updateCompanyByIdSchema),company.updateCompanyById);
