@@ -17,7 +17,6 @@ const getAllDepartments = async (req: Request, res: Response, next: NextFunction
             departments
         })
     } catch (e: any) {
-        e.status = 500;
         return next(e);
     }
 }
