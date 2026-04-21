@@ -6,7 +6,7 @@ import { addEmployeeSchema, updateEmployeeByIdSchema } from '../validations/empl
 
 const router = express.Router();
 
-router.get('/' ,auth, employee.getAllEmployees);
+router.get('/get-employees/:company' ,auth, employee.getCompanyEmployees);
 router.get('/:names',auth, employee.searchEmployeesByName);  // use query, not param
 router.post('/',auth,validate(addEmployeeSchema), employee.addEmployee);
 router.put('/:id',auth, validate(updateEmployeeByIdSchema), employee.updateEmployeeById)

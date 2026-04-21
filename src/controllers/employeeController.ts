@@ -1,16 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import employee from '../models/employees';
+import { CustomError } from '../utils/customError';
 
 
-const getAllEmployees = async (req: Request, res: Response, next: NextFunction) => {
+const getCompanyEmployees = async (
+  req: Request<{company:string}>, 
+  res: Response, 
+  next: NextFunction
+) => {
   try {
-    const allEmployees = await employee.find()
-      .populate('company', 'name code email phone')
-      .populate('department', 'name ')
-      .populate('role', 'name permissions ');
+    const company = req.params.company;
+    if(!company){
+      const err:any = new CustomError("Company should be provided",400);
+      return next(err);
+    }
+    const allEmployees = await employee.find({companies:{$in:[company]}})
+      .populate('company')
+      .populate('department')
+      .populate('role');
     res.status(200).json(allEmployees);
   } catch (e: any) {
-    e.status = 500;
     return next(e);
   }
 }
@@ -114,7 +123,7 @@ const deleteEmployeeById = async (req: Request<{ id: string }>, res: Response, n
   }
 }
 export {
-  getAllEmployees,
+  getCompanyEmployees,
   searchEmployeesByName,
   addEmployee,
   updateEmployeeById,
