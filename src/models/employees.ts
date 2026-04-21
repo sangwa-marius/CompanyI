@@ -39,6 +39,10 @@ const employees = new mongoose.Schema({
         enum: ['ACTIVE','INACTIVE','SUSPENDED'],
         default: 'ACTIVE'
     },
+    companies:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Company"
+    }],
 
     hiredAt:Date,
     
