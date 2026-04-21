@@ -14,7 +14,7 @@ const addEmployeeSchema = Joi.object({
         'string.max':'phone number must be atmost 13 characters long'
     }),
     company: Joi.string().required().trim(),
-    department: Joi.string().required().trim(),
+    department: Joi.string().trim(),
     role: Joi.string().trim().default('ACTIVE'),
     hiredAt: Joi.date().iso().min('2020-12-31').max('now')
 });

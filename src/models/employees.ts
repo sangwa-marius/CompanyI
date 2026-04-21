@@ -20,13 +20,12 @@ const employees = new mongoose.Schema({
     department:{
         type:mongoose.SchemaTypes.ObjectId,
         ref:'Department',
-        required: true
+       
     },
 
     role:{
         type: mongoose.Schema.ObjectId,
         ref: 'Role',
-        required: true
     },
 
     status:{

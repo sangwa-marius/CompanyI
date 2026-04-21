@@ -61,13 +61,22 @@ const addEmployee = async (
   next: NextFunction
 ) => {
   try {
-    const newEmployee = new employee(req.body);
-    await newEmployee.save();
-    await newEmployee.populate([
-      { path: 'company', select: 'name code email phone' },
-      { path: 'department', select: 'name' },
-      { path: 'role', select: 'name permissions' }
-    ])
+    const employeeExists = await employee.findOne({email:req.body.email}) as any;
+    if(employeeExists){
+      console.log(employeeExists);
+      const newEmployee = await employee.updateOne(
+        {_id:employeeExists._id},
+        {$addToSet:{companies:req.body.company}}
+      );
+      return res.status(201).json({message:"Employee added sucessfully", newEmployee});
+    }
+    await employee.create(req.body);
+    await employee.updateOne(
+      {email:req.body.email},
+      {$addToSet:{companies:req.body.company}}
+    )
+    const newEmployee = await employee.findOne({email:req.body.email})
+
 
     res.status(201).json({ message: "Employee added successfully", newEmployee })
   } catch (error: any) {
