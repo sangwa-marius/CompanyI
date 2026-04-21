@@ -5,8 +5,8 @@ import { CustomError } from '../utils/customError';
 const getAllDepartments = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const departments = await Department.find()
-            .populate('company', 'name code email')
-            .populate('manager', ' name email phone');
+            .populate('company')
+            .populate('manager');
         if (departments.length === 0) {
             const err:any= new CustomError("No departments found",404);
             return next(err)
@@ -17,30 +17,32 @@ const getAllDepartments = async (req: Request, res: Response, next: NextFunction
             departments
         })
     } catch (e: any) {
-        e.status = 500;
         return next(e);
     }
 }
 
 
-const getDepartmentsByName = async (req: Request, res: Response, next: NextFunction) => {
+const getDepartmentById = async (
+    req: Request<{id:string}>, 
+    res: Response, 
+    next: NextFunction
+) => {
     try {
-        const name = req.params.name;
-        if (!name) {
-            const error: any = new CustomError('name is required',400);
+        const id = req.params.id;
+        if (!id) {
+            const error: any = new CustomError('the id is required',400);
             return next(error);
         }
-        const departments = await Department.find({ name })
-            .populate('company', 'name code email')
-            .populate('manager', ' name email phone');
-        if (departments.length === 0) {
+        const department = await Department.findById(id)
+            .populate('company')
+            .populate('manager');
+        if (!department) {
             const err:any = new CustomError("No department found",404);
             return next(err);
         }
         res.status(200).json({
-            Total: departments.length,
             message: "Here are the departments found",
-            departments
+            department
         })
     } catch (e: any) {
         return next(e);
@@ -71,8 +73,8 @@ const updateDepartmentById = async (req: Request, res: Response, next: NextFunct
             id,
             req.body,
             { new: true, runValidators: true }
-        ).populate('company', 'name code email')
-            .populate('manager', ' name email phone');
+        ).populate('company')
+            .populate('manager');
 
 
         res.status(200).json({ message: "Department updated successfull", newDepartment });
@@ -106,7 +108,7 @@ const deleteDepartmentById = async (req: Request, res: Response, next: NextFunct
 
 export {
     getAllDepartments,
-    getDepartmentsByName,
+    getDepartmentById,
     addDepartment,
     updateDepartmentById,
     deleteDepartmentById

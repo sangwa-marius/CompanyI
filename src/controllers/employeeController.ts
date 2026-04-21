@@ -1,16 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import employee from '../models/employees';
+import { CustomError } from '../utils/customError';
 
 
-const getAllEmployees = async (req: Request, res: Response, next: NextFunction) => {
+const getCompanyEmployees = async (
+  req: Request<{company:string}>, 
+  res: Response, 
+  next: NextFunction
+) => {
   try {
-    const allEmployees = await employee.find()
-      .populate('company', 'name code email phone')
-      .populate('department', 'name ')
-      .populate('role', 'name permissions ');
+    const company = req.params.company;
+    if(!company){
+      const err:any = new CustomError("Company should be provided",400);
+      return next(err);
+    }
+    const allEmployees = await employee.find({companies:{$in:[company]}})
+      .populate('company')
+      .populate('department')
+      .populate('role');
     res.status(200).json(allEmployees);
   } catch (e: any) {
-    e.status = 500;
     return next(e);
   }
 }
@@ -52,13 +61,22 @@ const addEmployee = async (
   next: NextFunction
 ) => {
   try {
-    const newEmployee = new employee(req.body);
-    await newEmployee.save();
-    await newEmployee.populate([
-      { path: 'company', select: 'name code email phone' },
-      { path: 'department', select: 'name' },
-      { path: 'role', select: 'name permissions' }
-    ])
+    const employeeExists = await employee.findOne({email:req.body.email}) as any;
+    if(employeeExists){
+      console.log(employeeExists);
+      const newEmployee = await employee.updateOne(
+        {_id:employeeExists._id},
+        {$addToSet:{companies:req.body.company}}
+      );
+      return res.status(201).json({message:"Employee added sucessfully", newEmployee});
+    }
+    await employee.create(req.body);
+    await employee.updateOne(
+      {email:req.body.email},
+      {$addToSet:{companies:req.body.company}}
+    )
+    const newEmployee = await employee.findOne({email:req.body.email})
+
 
     res.status(201).json({ message: "Employee added successfully", newEmployee })
   } catch (error: any) {
@@ -114,7 +132,7 @@ const deleteEmployeeById = async (req: Request<{ id: string }>, res: Response, n
   }
 }
 export {
-  getAllEmployees,
+  getCompanyEmployees,
   searchEmployeesByName,
   addEmployee,
   updateEmployeeById,

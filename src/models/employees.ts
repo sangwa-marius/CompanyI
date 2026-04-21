@@ -16,22 +16,16 @@ const employees = new mongoose.Schema({
     },
 
     phone: String,
-    company:{
-        type: mongoose.Schema.ObjectId,
-        ref: 'Company',
-        required: true
-    },
 
     department:{
         type:mongoose.SchemaTypes.ObjectId,
         ref:'Department',
-        required: true
+       
     },
 
     role:{
         type: mongoose.Schema.ObjectId,
         ref: 'Role',
-        required: true
     },
 
     status:{
@@ -39,6 +33,11 @@ const employees = new mongoose.Schema({
         enum: ['ACTIVE','INACTIVE','SUSPENDED'],
         default: 'ACTIVE'
     },
+    companies:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Company",
+        required:true
+    }],
 
     hiredAt:Date,
     

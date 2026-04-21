@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "build": "tsc",
     "ejs": "nodemon ejs.js",
     "start": "ts-node src/server.ts",
     "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/server.ts",
@@ -31,6 +32,7 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "ts-node": "^10.9.2",
+    "tsc": "^2.0.4",
     "typescript": "^6.0.2"
   },
   "devDependencies": {
