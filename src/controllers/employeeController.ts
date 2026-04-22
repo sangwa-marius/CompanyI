@@ -64,10 +64,12 @@ const addEmployee = async (
     const employeeExists = await Employee.findOne({email:req.body.email}) as any;
     if(employeeExists){
       console.log(employeeExists);
-      const newEmployee = await Employee.updateOne(
+      await Employee.updateOne(
         {_id:employeeExists._id},
         {$addToSet:{companies:req.body.company}}
       );
+
+      const newEmployee = await Employee.findOne({email:req.body.email})
       return res.status(201).json({message:"Employee added sucessfully", newEmployee});
     }
     await Employee.create(req.body);
@@ -119,13 +121,17 @@ const updateEmployeeById = async (req: Request<{ id: string }>, res: Response, n
 const deleteEmployeeById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
+    const company = req.body.company
     if (!id) {
       const error: any = new Error('provide the id');
       error.status = 400;
       return next(error);
     }
-    await Employee.findByIdAndDelete(id);
-    res.status(200).json({ message: "Employee deleted" })
+    await Employee.findByIdAndUpdate(
+      id,
+      {$pull:{companies:company}}
+    );
+    res.status(200).json({ message: "Employee removed successfully" })
   } catch (error: any) {
     return next(error)
 
