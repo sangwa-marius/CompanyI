@@ -131,7 +131,7 @@ const deleteEmployeeById = async (req: Request<{ id: string }>, res: Response, n
 
   }
 }
-export {
+export default{
   getCompanyEmployees,
   getEmployeeById,
   addEmployee,

@@ -1,5 +1,5 @@
-import * as express from 'express';
-import * as employee from '../controllers/employeeController';
+import express from 'express';
+import employee from '../controllers/employeeController';
 import auth from '../middleware/auth';
 import validate from '../middleware/validator';
 import { addEmployeeSchema, updateEmployeeByIdSchema } from '../validations/employeeValidations';
