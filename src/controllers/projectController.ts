@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Project from '../models/project';
+import { CustomError } from '../utils/customError';
 
 const getAllProjects = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -9,8 +10,7 @@ const getAllProjects = async (req: Request, res: Response, next: NextFunction) =
             .populate('members');
 
         if (projects.length === 0) {
-            const error: any = new Error('No project added yet');
-            error.status = 404;
+            const error: any = new CustomError('No project added yet',404);
             return next(error);
         } else {
             res.status(200).json({
@@ -20,9 +20,7 @@ const getAllProjects = async (req: Request, res: Response, next: NextFunction) =
             })
         }
     } catch (e: any) {
-        console.log(e.message);
-        const error: any = new Error('Failed to get projects');
-        error.status = 500;
+        const error: any = new CustomError('Failed to get projects',500);
         return next(error);
 
     }
@@ -34,8 +32,7 @@ const getProjectsByName = async (req: Request<{ name: string }>, res: Response, 
     try {
         const name = req.params.name;
         if (!name) {
-            const error: any = new Error('To get the project the name is required');
-            error.status = 400;
+            const error: any = new CustomError('To get the project the name is required',400);
             next(error);
         }
 
@@ -73,7 +70,7 @@ const addProject = async (req: Request, res: Response, next: NextFunction) => {
         await newProject.populate('manager');
         await newProject.populate('members');
 
-        res.status(201).json({ message: "project added" })
+        res.status(201).json({ message: "project added" ,newProject})
     } catch (e: any) {
         return next(e);
     }
@@ -84,14 +81,12 @@ const updateProjectById = async (req: Request<{ id: string }>, res: Response, ne
     try {
         const id = req.params.id;
         if (!id) {
-            const error: any = new Error('Provide the id');
-            error.status = 400;
+            const error: any = new CustomError('Provide the id',400);
             return next(error);
         }
 
         if (!(await Project.findOne({ id }))) {
-            const error: any = new Error(`No project with id ${id}`);
-            error.status = 400;
+            const error: any = new CustomError(`No project with id ${id}`,400);
             return next(error);
         }
 
@@ -116,14 +111,12 @@ const deleteProjectById = async (req: Request<{ id: string }>, res: Response, ne
     try {
         const id = req.params.id;
         if (!id) {
-            const error: any = new Error('Provide the id');
-            error.status = 400;
+            const error: any = new CustomError('Provide the id',400);
             return next(error);
         }
 
         if (!(await Project.findOne({ id }))) {
-            const error: any = new Error(`No project with Id ${id}`);
-            error.status = 400;
+            const error: any = new CustomError(`No project with Id ${id}`,400);
             return next(error);
         }
 
