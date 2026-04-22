@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import employee from '../models/employees';
+import Employee from '../models/employees';
 import { CustomError } from '../utils/customError';
 
 
@@ -14,8 +14,8 @@ const getCompanyEmployees = async (
       const err:any = new CustomError("Company should be provided",400);
       return next(err);
     }
-    const allEmployees = await employee.find({companies:{$in:[company]}})
-      .populate('company')
+    const allEmployees = await Employee.find({companies:{$in:[company]}})
+      .populate('companies')
       .populate('department')
       .populate('role');
     res.status(200).json(allEmployees);
@@ -25,30 +25,30 @@ const getCompanyEmployees = async (
 }
 
 
-const searchEmployeesByName = async (
-  req: Request<{ name: string }, {}, {}, {}>,
+const getEmployeeById = async (
+  req: Request<{id:string }, {}, {}, {}>,
   res: Response,
   next: NextFunction) => {
 
   try {
-    const name = req.params.name;
+    const id = req.params.id;
 
-    if (!name) {
-      const error: any = new Error('please provide a name');
+    if (!id) {
+      const error: any = new Error('please provide an id');
       error.status = 400;
       return next(error);
     }
-    const employees = await employee.find({ names: { $regex: name, $options: 'i' } })
-      .populate('company', 'name code email phone')
-      .populate('department', 'name ')
-      .populate('role', 'name permissions ');
+    const employee = await Employee.findById(id)
+      .populate('companies')
+      .populate('department')
+      .populate('role',);
 
-    if (employees.length === 0) {
+    if (!employee) {
       const error: any = new Error('No employee found');
       error.status = 404;
       return next(error);
     }
-    return res.status(200).json(employees);
+    return res.status(200).json(employee);
   } catch (e: any) {
     e.status = 500;
     return next(e);
@@ -61,21 +61,21 @@ const addEmployee = async (
   next: NextFunction
 ) => {
   try {
-    const employeeExists = await employee.findOne({email:req.body.email}) as any;
+    const employeeExists = await Employee.findOne({email:req.body.email}) as any;
     if(employeeExists){
       console.log(employeeExists);
-      const newEmployee = await employee.updateOne(
+      const newEmployee = await Employee.updateOne(
         {_id:employeeExists._id},
         {$addToSet:{companies:req.body.company}}
       );
       return res.status(201).json({message:"Employee added sucessfully", newEmployee});
     }
-    await employee.create(req.body);
-    await employee.updateOne(
+    await Employee.create(req.body);
+    await Employee.updateOne(
       {email:req.body.email},
       {$addToSet:{companies:req.body.company}}
     )
-    const newEmployee = await employee.findOne({email:req.body.email})
+    const newEmployee = await Employee.findOne({email:req.body.email})
 
 
     res.status(201).json({ message: "Employee added successfully", newEmployee })
@@ -94,12 +94,12 @@ const updateEmployeeById = async (req: Request<{ id: string }>, res: Response, n
       return next(error);
     }
 
-    if (!(await employee.findOne({ _id: id }))) {
+    if (!(await Employee.findOne({ _id: id }))) {
       const error: any = new Error('No Employee found');
       error.status = 400;
       return next(error);
     }
-    const newEmployee = await employee.findByIdAndUpdate(
+    const newEmployee = await Employee.findByIdAndUpdate(
       id,
       req.body,
       { new: true, runValidators: true }
@@ -124,7 +124,7 @@ const deleteEmployeeById = async (req: Request<{ id: string }>, res: Response, n
       error.status = 400;
       return next(error);
     }
-    await employee.findByIdAndDelete(id);
+    await Employee.findByIdAndDelete(id);
     res.status(200).json({ message: "Employee deleted" })
   } catch (error: any) {
     return next(error)
@@ -133,7 +133,7 @@ const deleteEmployeeById = async (req: Request<{ id: string }>, res: Response, n
 }
 export {
   getCompanyEmployees,
-  searchEmployeesByName,
+  getEmployeeById,
   addEmployee,
   updateEmployeeById,
   deleteEmployeeById
