@@ -4,9 +4,9 @@ import Project from '../models/project';
 const getAllProjects = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const projects = await Project.find()
-            .populate('company', 'name code email phone address')
-            .populate('manager', ' names email phone  ')
-            .populate('members', 'names email phone');
+            .populate('company')
+            .populate('manager')
+            .populate('members');
 
         if (projects.length === 0) {
             const error: any = new Error('No project added yet');
@@ -40,9 +40,9 @@ const getProjectsByName = async (req: Request<{ name: string }>, res: Response, 
         }
 
         const projects = await Project.find({ name: { $regex: name, $options: 'i' } })
-            .populate('company', 'name code email phone address')
-            .populate('manager', ' names email phone  ')
-            .populate('members', 'names email phone');
+            .populate('company')
+            .populate('manager')
+            .populate('members');
         if (projects.length === 0) {
             const error: any = new Error('No project found');
             error.status = 404;
@@ -69,9 +69,9 @@ const addProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const newProject = new Project(req.body);
         await newProject.save();
-        await newProject.populate('company', 'name code email phone address');
-        await newProject.populate('manager', ' names email phone  ');
-        await newProject.populate('members', 'names email phone');
+        await newProject.populate('company');
+        await newProject.populate('manager');
+        await newProject.populate('members');
 
         res.status(201).json({ message: "project added" })
     } catch (e: any) {
@@ -99,9 +99,9 @@ const updateProjectById = async (req: Request<{ id: string }>, res: Response, ne
             id,
             req.body,
             { new: true, runValidators: true }
-        ).populate('company', 'name code email phone address')
-            .populate('manager', ' names email phone  ')
-            .populate('members', 'names email phone');
+        ).populate('company')
+            .populate('manager')
+            .populate('members');
 
         res.status(200).json({ message: "project updated successfull", newProject })
 
