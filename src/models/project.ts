@@ -3,8 +3,12 @@ import mongoose from 'mongoose';
 const projectSchema = new mongoose.Schema({
     name:{
         type: String,
-        required: true,
-        unique: true
+        required: true
+    },
+
+    description:{
+        type:String,
+        default:""
     },
 
     company:{
@@ -15,8 +19,7 @@ const projectSchema = new mongoose.Schema({
 
     manager:{
         type:mongoose.Schema.Types.ObjectId,
-        ref: 'Employee',
-        required: true
+        ref: 'Employee'
     },
 
     members:[{
