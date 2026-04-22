@@ -2,11 +2,21 @@ import { Request, Response, NextFunction } from 'express';
 import Department from '../models/department';
 import { CustomError } from '../utils/customError';
 
-const getAllDepartments = async (req: Request, res: Response, next: NextFunction) => {
+const getCompanyDepartments = async (
+    req: Request<{company:string}>, 
+    res: Response, 
+    next: NextFunction
+) => {
     try {
-        const departments = await Department.find()
+        const company = req.params.company;
+        if(!company){
+            const err:any = new CustomError("The company is required",400);
+            return next(err)
+        }
+        const departments = await Department.find({company})
             .populate('company')
-            .populate('manager');
+            .populate('manager')
+            .populate('members');
         if (departments.length === 0) {
             const err:any= new CustomError("No departments found",404);
             return next(err)
@@ -107,7 +117,7 @@ const deleteDepartmentById = async (req: Request, res: Response, next: NextFunct
 
 
 export {
-    getAllDepartments,
+    getCompanyDepartments,
     getDepartmentById,
     addDepartment,
     updateDepartmentById,

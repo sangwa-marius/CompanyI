@@ -5,7 +5,7 @@ import { addDepartmentSchema, updateDepartmentByIdSchema } from '../validations/
 import validate from '../middleware/validator';
 const router = express.Router();
 
-router.get('/get-all-departments',auth, department.getAllDepartments);
+router.get('/get-company-departments',auth, department.getCompanyDepartments);
 router.get('/get-department/:id',auth, department.getDepartmentById);
 router.post('/add-department', auth, validate(addDepartmentSchema), department.addDepartment);
 router.put('/update-department/:id', auth, validate(updateDepartmentByIdSchema), department.updateDepartmentById);
