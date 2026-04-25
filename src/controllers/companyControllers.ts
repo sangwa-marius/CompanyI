@@ -143,15 +143,18 @@ const deletecompanyById = async (
 ) => {
     try {
         const id = req.params.id;
-        if (!(await Company.findOne({ id }))) {
+        console.log(id)
+        if (!(await Company.findById(id))) {
             const error: any = new CustomError('no company found', 404);
             return next(error);
         }
-        if(await Employee.deleteMany({companies:{$in:[id]}}) && await Company.findByIdAndDelete(id)){
+        if(await Employee.updateMany(
+            {companies:{$in:[id]}},
+            {$pull:{companies:id}}
+        ) && await Company.findByIdAndDelete(id)){
             res.status(200).json({ message: "company deleted" })
         }
-        
-       
+    
     } catch (e: any) {
         return next(e)
     }
