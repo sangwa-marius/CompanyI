@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/get-employees/:company' ,auth, employee.getCompanyEmployees);
 router.get('/get-employee/:id',auth, employee.getEmployeeById); 
 router.post('/add-employee',auth,validate(addEmployeeSchema), employee.addEmployee);
-router.put('/:id',auth, validate(updateEmployeeByIdSchema), employee.updateEmployeeById)
-router.delete('/:id',auth, employee.deleteEmployeeById);
+router.put('/update-employee/:id',auth, validate(updateEmployeeByIdSchema), employee.updateEmployeeById)
+router.put('/delete-employee/:id',auth, employee.deleteEmployeeById);
 
 export default router;
