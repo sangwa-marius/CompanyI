@@ -36,7 +36,7 @@ const employees = new mongoose.Schema({
     companies:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Company",
-        required:true
+        default:[]
     }],
 
     hiredAt:Date,
