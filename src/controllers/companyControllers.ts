@@ -1,6 +1,7 @@
 import Company from '../models/company';
 import { Request, Response, NextFunction } from "express"
 import { CustomError } from '../utils/customError';
+import Employee from "../models/employees"
 
 
 const getAllCompanies = async (req: Request, res: Response, next: NextFunction) => {
@@ -146,8 +147,11 @@ const deletecompanyById = async (
             const error: any = new CustomError('no company found', 404);
             return next(error);
         }
-        await Company.findByIdAndDelete(id);
-        res.status(200).json({ message: "company deleted" })
+        if(await Employee.deleteMany({companies:{$in:[id]}}) && await Company.findByIdAndDelete(id)){
+            res.status(200).json({ message: "company deleted" })
+        }
+        
+       
     } catch (e: any) {
         return next(e)
     }
