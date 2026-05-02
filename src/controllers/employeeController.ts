@@ -4,17 +4,17 @@ import { CustomError } from '../utils/customError';
 
 
 const getCompanyEmployees = async (
-  req: Request<{company:string}>, 
-  res: Response, 
+  req: Request<{ company: string }>,
+  res: Response,
   next: NextFunction
 ) => {
   try {
     const company = req.params.company;
-    if(!company){
-      const err:any = new CustomError("Company should be provided",400);
+    if (!company) {
+      const err: any = new CustomError("Company should be provided", 400);
       return next(err);
     }
-    const allEmployees = await Employee.find({companies:{$in:[company]}})
+    const allEmployees = await Employee.find({ companies: { $in: [company] } })
       .populate('companies')
       .populate('department')
       .populate('role');
@@ -26,7 +26,7 @@ const getCompanyEmployees = async (
 
 
 const getEmployeeById = async (
-  req: Request<{id:string }, {}, {}, {}>,
+  req: Request<{ id: string }, {}, {}, {}>,
   res: Response,
   next: NextFunction) => {
 
@@ -61,23 +61,23 @@ const addEmployee = async (
   next: NextFunction
 ) => {
   try {
-    const employeeExists = await Employee.findOne({email:req.body.email}) as any;
-    if(employeeExists){
+    const employeeExists = await Employee.findOne({ email: req.body.email }) as any;
+    if (employeeExists) {
       console.log(employeeExists);
       await Employee.updateOne(
-        {_id:employeeExists._id},
-        {$addToSet:{companies:req.body.company}}
+        { _id: employeeExists._id },
+        { $addToSet: { companies: req.body.company } }
       );
 
-      const newEmployee = await Employee.findOne({email:req.body.email})
-      return res.status(201).json({message:"Employee added sucessfully", newEmployee});
+      const newEmployee = await Employee.findOne({ email: req.body.email })
+      return res.status(201).json({ message: "Employee added sucessfully", newEmployee });
     }
     await Employee.create(req.body);
     await Employee.updateOne(
-      {email:req.body.email},
-      {$addToSet:{companies:req.body.company}}
+      { email: req.body.email },
+      { $addToSet: { companies: req.body.company } }
     )
-    const newEmployee = await Employee.findOne({email:req.body.email})
+    const newEmployee = await Employee.findOne({ email: req.body.email })
 
 
     res.status(201).json({ message: "Employee added successfully", newEmployee })
@@ -129,7 +129,7 @@ const deleteEmployeeById = async (req: Request<{ id: string }>, res: Response, n
     }
     await Employee.findByIdAndUpdate(
       id,
-      {$pull:{companies:company}}
+      { $pull: { companies: company } }
     );
     res.status(200).json({ message: "Employee removed successfully" })
   } catch (error: any) {
@@ -137,7 +137,7 @@ const deleteEmployeeById = async (req: Request<{ id: string }>, res: Response, n
 
   }
 }
-export default{
+export default {
   getCompanyEmployees,
   getEmployeeById,
   addEmployee,

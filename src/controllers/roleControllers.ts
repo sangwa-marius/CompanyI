@@ -26,7 +26,7 @@ const getCompanyRoles = async (req: Request<{ companyId: string }>, res: Respons
 }
 
 
-const addRole = async (req:Request, res:Response, next:NextFunction) => {
+const addRole = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const newRole = new Role(req.body)
         await newRole.save();
@@ -37,7 +37,7 @@ const addRole = async (req:Request, res:Response, next:NextFunction) => {
     }
 }
 
-const updateRoleById = async (req:Request<{id:string}>, res:Response, next:NextFunction) => {
+const updateRoleById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     try {
         const id = req.params.id;
         if (!id) {
@@ -66,7 +66,7 @@ const updateRoleById = async (req:Request<{id:string}>, res:Response, next:NextF
     }
 }
 
-const deleteRoleById = async (req:Request<{id:string}>, res:Response, next:NextFunction) => {
+const deleteRoleById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     try {
         const id = req.params.id;
         if (!id) {
