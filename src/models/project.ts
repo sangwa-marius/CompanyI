@@ -1,37 +1,37 @@
 import mongoose from 'mongoose';
 
 const projectSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
         required: true
     },
 
-    description:{
-        type:String,
-        default:""
+    description: {
+        type: String,
+        default: ""
     },
 
-    company:{
+    company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Company',
         required: true
     },
 
-    manager:{
-        type:mongoose.Schema.Types.ObjectId,
+    manager: {
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee'
     },
 
-    members:[{
+    members: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee',
     }],
 
-    status:{
+    status: {
         type: String,
-        enum: ['PLANNED','ONGOING','COMPLETED'],
+        enum: ['PLANNED', 'ONGOING', 'COMPLETED'],
         default: 'PLANNED'
     },
-},{timestamps: true});
+}, { timestamps: true });
 
-export default mongoose.model('Project',projectSchema);
+export default mongoose.model('Project', projectSchema);
