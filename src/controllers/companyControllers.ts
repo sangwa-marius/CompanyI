@@ -26,21 +26,21 @@ const getAllCompanies = async (req: Request, res: Response, next: NextFunction) 
 }
 
 
-const getYourCompanies = async(
-    req:any,
-    res:Response, 
-    next:NextFunction
-)=>{
+const getYourCompanies = async (
+    req: any,
+    res: Response,
+    next: NextFunction
+) => {
     try {
-        const companies = await Company.find({owner:req.userId})
-        if(companies.length ===0){
-            const err:any = new CustomError("No companies",404);
+        const companies = await Company.find({ owner: req.userId })
+        if (companies.length === 0) {
+            const err: any = new CustomError("No companies", 404);
             return next(err);
         }
         res.status(200).json(companies);
     } catch (error) {
         return next(error)
-        
+
     }
 }
 
@@ -148,13 +148,13 @@ const deletecompanyById = async (
             const error: any = new CustomError('no company found', 404);
             return next(error);
         }
-        if(await Employee.updateMany(
-            {companies:{$in:[id]}},
-            {$pull:{companies:id}}
-        ) && await Company.findByIdAndDelete(id)){
+        if (await Employee.updateMany(
+            { companies: { $in: [id] } },
+            { $pull: { companies: id } }
+        ) && await Company.findByIdAndDelete(id)) {
             res.status(200).json({ message: "company deleted" })
         }
-    
+
     } catch (e: any) {
         return next(e)
     }
