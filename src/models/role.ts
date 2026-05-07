@@ -1,23 +1,23 @@
 import mongoose from 'mongoose';
 
 const roleSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
         required: true,
         uppercase: true,
         trim: true
     },
 
-    permissions:[{
+    permissions: [{
         type: String,
     }],
 
-    company:{
+    company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Company',
         required: true
     }
 
-},{timestamps: true});
+}, { timestamps: true });
 
-export default mongoose.model('Role',roleSchema);
+export default mongoose.model('Role', roleSchema);
