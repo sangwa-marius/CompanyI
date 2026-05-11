@@ -7,11 +7,11 @@ import userRoutes from './userRoutes';
 import express from 'express';
 const router = express.Router();
 
-router.use('/auth',userRoutes);
-router.use('/role',roleRoutes);
-router.use('/company',companyRoutes);
-router.use('/employee',employeeRoutes);
-router.use('/project',projectRoutes);
-router.use('/department',departmentRoutes);
+router.use('/auth', userRoutes);
+router.use('/role', roleRoutes);
+router.use('/company', companyRoutes);
+router.use('/employee', employeeRoutes);
+router.use('/project', projectRoutes);
+router.use('/department', departmentRoutes);
 
 export default router;
