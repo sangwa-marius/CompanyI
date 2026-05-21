@@ -1,20 +1,22 @@
 import nodemailer from 'nodemailer';
+import dotenv from "dotenv"
+dotenv.config()
 
 const transporter = nodemailer.createTransport({
     "service": 'gmail',
     auth:{
         "user":process.env.EMAIL_USER,
-        "pass":process.env.EMAIL_PASSWORD
+        "pass":process.env.EMAIL_PASS
     }
 })
 
-const sendWelcomeEmail = async (to:string, subject:string)=>{
+export const sendWelcomeEmail = async (to:string, subject:string, username:string)=>{
     try{
         const emailOptions ={
-            "from":process.env.EMAIL_USER,
+            "from":`<${process.env.APPNAME}>`,
             "to":to,
             "subject":subject,
-            "text":"Welcome to our app! We're glad to have you on board."
+            "text":`Welcome ${username}! We wanna thank you for registering for Company`
         }
         const info = await transporter.sendMail(emailOptions);
         console.log("Email sent: " + info.response);
@@ -23,3 +25,4 @@ const sendWelcomeEmail = async (to:string, subject:string)=>{
         console.log("Error sending Welcome email: "+e.message)
     }
 }
+

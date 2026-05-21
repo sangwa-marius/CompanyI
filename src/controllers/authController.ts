@@ -4,6 +4,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { CustomError } from '../utils/customError';
+import { sendWelcomeEmail } from "../utils/Mail"
+
 dotenv.config();
 
 
@@ -27,9 +29,13 @@ const register = async (
             email,
             password: hashed
         });
-        res.status(200).json({
-            message: "registered successfully",
-            newUser
+        const subject: string = "Welcoming You"
+
+        sendWelcomeEmail(email, subject, username).then(() => {
+            res.status(200).json({
+                message: "registered successfully",
+                newUser
+            })
         })
     } catch (e: any) {
         return next(e);
