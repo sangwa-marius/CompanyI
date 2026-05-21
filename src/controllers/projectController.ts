@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Project from '../models/project';
 import { CustomError } from '../utils/customError';
+import Employee from '../models/employees';
 
 const getAllProjects = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -106,6 +107,35 @@ const updateProjectById = async (req: Request<{ id: string }>, res: Response, ne
 
 }
 
+const addMemberToProject = async (
+    req:Request<{projectId: string},{},{employeeId: string}>,
+    res:Response,
+    next:NextFunction
+)=>{
+    if(!req.params.projectId || !req.body.employeeId){
+        return next(new CustomError('Provide the project id and employee id',400));
+    }
+    if(!(await Project.findById(req.params.projectId))){
+        return next(new CustomError(`No project with id ${req.params.projectId}`,400));
+    }
+    if(!(await Employee.findById(req.body.employeeId))){
+        return next(new CustomError(`No employee with id ${req.body.employeeId}`,400));
+    }
+
+    try {
+        const newProject = await Project.findByIdAndUpdate(
+            req.params.projectId,
+            { $addToSet: { members: req.body.employeeId } },
+            { new: true }   
+        );
+        res.status(200).json({ message: "Member added to project successfully", newProject });
+    } catch (error) {
+        return next(new CustomError('Failed to add member to project', 500));
+    }
+
+
+}
+
 
 const deleteProjectById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     try {
@@ -133,5 +163,6 @@ export {
     getProjectsByName,
     addProject,
     updateProjectById,
-    deleteProjectById
+    deleteProjectById,
+    addMemberToProject
 };

@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/', auth, project.getAllProjects);
 router.get('/:name', auth, project.getProjectsByName);
 router.post('/add-project', auth, validate(addProjectSchema), project.addProject);
+router.post('/add-member-to-project/:projectId', auth, project.addMemberToProject);
 router.put('/update-project/:id', auth, validate(updateProjectSchema), project.updateProjectById);
 router.delete('/:id', auth, project.deleteProjectById);
 
