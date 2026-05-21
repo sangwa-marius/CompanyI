@@ -2,26 +2,28 @@ import { Request, Response, NextFunction } from 'express';
 import Project from '../models/project';
 import { CustomError } from '../utils/customError';
 import Employee from '../models/employees';
+import mongoose from 'mongoose';
 
-const getAllProjects = async (req: Request, res: Response, next: NextFunction) => {
+const getAllCompanyProjects = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const projects = await Project.find()
+        const id = req.params.companyId as any;
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            const error: any = new CustomError('Provide a valid company id', 400);
+            return next(error);
+        }
+        const projects = await Project.find({company: req.params.companyId})
             .populate('company')
             .populate('manager')
             .populate('members');
-
-        if (projects.length === 0) {
-            const error: any = new CustomError('No project added yet', 404);
-            return next(error);
-        } else {
+        
             res.status(200).json({
                 Total: projects.length,
                 message: "Here are the projects found",
                 projects
             })
-        }
+        
     } catch (e: any) {
-        const error: any = new CustomError('Failed to get projects', 500);
+        const error: any = new CustomError(e.message, 500);
         return next(error);
 
     }
@@ -29,33 +31,26 @@ const getAllProjects = async (req: Request, res: Response, next: NextFunction) =
 
 
 
-const getProjectsByName = async (req: Request<{ name: string }>, res: Response, next: NextFunction) => {
+const getProjectById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     try {
-        const name = req.params.name;
-        if (!name) {
-            const error: any = new CustomError('To get the project the name is required', 400);
+        const id = req.params.id;
+        if (!id) {
+            const error: any = new CustomError('To get the project the id is required', 400);
             next(error);
         }
 
-        const projects = await Project.find({ name: { $regex: name, $options: 'i' } })
+        const project = await Project.findById(id)
             .populate('company')
             .populate('manager')
             .populate('members');
-        if (projects.length === 0) {
-            const error: any = new Error('No project found');
-            error.status = 404;
-            return next(error);
-        }
-
+      
         res.status(200).json({
-            Total: projects.length,
-            message: "Here are the projects found",
-            projects
+            message: "Here is the project found",
+            project
         })
     } catch (e: any) {
         console.log(e.message)
-        const error: any = new Error('Failed to get project');
-        error.status = 500;
+        const error: any = new CustomError('Failed to get project', 500);
         return next(error);
 
     }
@@ -159,8 +154,8 @@ const deleteProjectById = async (req: Request<{ id: string }>, res: Response, ne
 }
 
 export {
-    getAllProjects,
-    getProjectsByName,
+    getAllCompanyProjects,
+    getProjectById,
     addProject,
     updateProjectById,
     deleteProjectById,

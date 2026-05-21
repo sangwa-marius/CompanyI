@@ -6,11 +6,11 @@ import { addProjectSchema, updateProjectSchema } from '../validations/projectVal
 
 const router = express.Router();
 
-router.get('/', auth, project.getAllProjects);
-router.get('/:name', auth, project.getProjectsByName);
+router.get('/get-all-company-projects/:companyId', auth, project.getAllCompanyProjects);
+router.get('/get-project/:id', auth, project.getProjectById);
 router.post('/add-project', auth, validate(addProjectSchema), project.addProject);
 router.post('/add-member-to-project/:projectId', auth, project.addMemberToProject);
 router.put('/update-project/:id', auth, validate(updateProjectSchema), project.updateProjectById);
-router.delete('/:id', auth, project.deleteProjectById);
+router.delete('/delete-project/:id', auth, project.deleteProjectById);
 
 export default router;
