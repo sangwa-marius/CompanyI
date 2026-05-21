@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
-const url = 'mongodb://localhost:27017/enterprise';
+import dotenv from 'dotenv'
+dotenv.config()
+const url = process.env.MONGO_DB_URI;
 
 const connectDB = async () => {
     try {

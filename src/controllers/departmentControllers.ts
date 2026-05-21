@@ -17,10 +17,7 @@ const getCompanyDepartments = async (
             .populate('company')
             .populate('manager')
             .populate('members');
-        if (departments.length === 0) {
-            const err: any = new CustomError("No departments found", 404);
-            return next(err)
-        }
+       
         res.status(200).json({
             Total: departments.length,
             message: "Here are the departments found",
