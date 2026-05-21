@@ -85,7 +85,7 @@ const updateProjectById = async (req: Request<{ id: string }>, res: Response, ne
             return next(error);
         }
 
-        if (!(await Project.findOne({ id }))) {
+        if (!(await Project.findById(id))) {
             const error: any = new CustomError(`No project with id ${id}`, 400);
             return next(error);
         }
