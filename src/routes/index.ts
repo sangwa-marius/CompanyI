@@ -5,9 +5,11 @@ import projectRoutes from './projectRoutes';
 import roleRoutes from './roleRoutes';
 import userRoutes from './userRoutes';
 import express from 'express';
+import auth from '../middleware/auth';
 const router = express.Router();
 
 router.use('/auth', userRoutes);
+router.use(auth);
 router.use('/role', roleRoutes);
 router.use('/company', companyRoutes);
 router.use('/employee', employeeRoutes);
