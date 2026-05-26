@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
-app.use('/api/v1', router)
+app.use('/api', router)
 app.use(notFound)
 app.use(errorHandler)
 connectDB().then(() => {

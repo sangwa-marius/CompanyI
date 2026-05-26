@@ -112,7 +112,7 @@ const forgotPassword = async(
 
             const resetToken = crypto.randomBytes(20).toString('hex');
             const resetTokenExpires = Date.now() + 10*60*1000;
-            const resetLink = `${process.env.FRONTEND_URL||`http://localhost:${process.env.PORT}`}/reset-password?token=${resetToken}&email=${email}`;
+            const resetLink = `${process.env.FRONTEND_URL||`http://localhost:${process.env.PORT}`}/api/auth/reset-password?token=${resetToken}&email=${email}`;
 
             user.passwordResetToken = resetToken;
             user.passwordResetExpires = new Date(resetTokenExpires);
@@ -136,5 +136,51 @@ const forgotPassword = async(
         }
 
 }
-export { register, login, forgotPassword };
+
+
+const resetPassword = async(
+    req:Request<{},{},{password:string},{token:string, email:string}>,
+    res:Response,
+    next:NextFunction
+)=>{
+
+   if (!req.query.token || !req.query.email) {
+        const err = new CustomError("Token and email are required", 400);
+        next(err);
+        return;
+    }
+
+    try {
+        const user = await User.findOne({
+            email: req.query.email,
+            passwordResetToken: req.query.token,
+            passwordResetExpires: {$gt:new Date()}
+        })
+
+        if (!user) return next(new CustomError("Invalid or expired token", 400));
+
+        const newPassword = req.body.password;
+        if (!newPassword) {
+            const err = new CustomError("New password is required", 400);
+            next(err);
+            return;
+        }
+
+        user.password = await bcrypt.hash(newPassword, 10);
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save();
+
+        res.status(200).json({
+            message: "Password reset successful"
+        })
+    } catch (error) {
+        const err = new CustomError("An error occurred while processing your request", 500);
+        next(err);
+        return;
+    }
+
+}
+
+export { register, login, forgotPassword , resetPassword};
 
