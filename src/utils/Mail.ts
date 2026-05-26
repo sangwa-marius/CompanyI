@@ -26,3 +26,18 @@ export const sendWelcomeEmail = async (to:string, subject:string, username:strin
     }
 }
 
+export const sendPasswordResetEmail = async (to:string, subject:string, resetLink:string)=>{
+    try{
+        const emailOptions ={
+            "from":`<${process.env.APPNAME}>`,
+            "to":to,
+            "subject":subject,
+            "text":`You requested a password reset. Click the link to reset your password: ${resetLink}`
+        }
+        const info = await transporter.sendMail(emailOptions);
+        console.log("Password reset email sent: " + info.response);
+        
+    }catch(e){
+        console.log("Error sending password reset email: "+e.message)   
+    }
+}
