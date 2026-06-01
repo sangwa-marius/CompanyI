@@ -56,8 +56,6 @@ const getProjectById = async (req: Request<{ id: string }>, res: Response, next:
     }
 }
 
-
-
 const addProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const newProject = new Project(req.body);
