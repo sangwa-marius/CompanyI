@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { CustomError } from '../utils/customError';
-import { sendWelcomeEmail ,sendPasswordResetEmail} from "../utils/Mail";
+import { sendWelcomeEmail, sendPasswordResetEmail } from "../utils/Mail";
 import crypto from "crypto";
 
 dotenv.config();
@@ -90,61 +90,61 @@ const login = async (
 }
 
 
-const forgotPassword = async(
-    req: Request<{},{},{email:string}>,
-    res:Response, 
+const forgotPassword = async (
+    req: Request<{}, {}, { email: string }>,
+    res: Response,
     next: NextFunction) => {
 
-        const email = req.body.email;
-        if (!email) {
-            const err = new CustomError("Email is required", 400);
+    const email = req.body.email;
+    if (!email) {
+        const err = new CustomError("Email is required", 400);
+        next(err);
+        return;
+    }
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            const err = new CustomError("User not found", 404);
             next(err);
             return;
         }
 
-        try {
-            const user = await User.findOne({ email });
-            if (!user){
-                const err = new CustomError("User not found", 404);
-                next(err);
-                return;
-            }
+        const resetToken = crypto.randomBytes(20).toString('hex');
+        const resetTokenExpires = Date.now() + 10 * 60 * 1000;
+        const resetLink = `${process.env.FRONTEND_URL || `http://localhost:${process.env.PORT}`}/api/auth/reset-password?token=${resetToken}&email=${email}`;
 
-            const resetToken = crypto.randomBytes(20).toString('hex');
-            const resetTokenExpires = Date.now() + 10*60*1000;
-            const resetLink = `${process.env.FRONTEND_URL||`http://localhost:${process.env.PORT}`}/api/auth/reset-password?token=${resetToken}&email=${email}`;
+        user.passwordResetToken = resetToken;
+        user.passwordResetExpires = new Date(resetTokenExpires);
+        await user.save();
 
-            user.passwordResetToken = resetToken;
-            user.passwordResetExpires = new Date(resetTokenExpires);
-            await user.save();
-            
-            const subject = "Password Reset Request";
-            const text = `You requested a password reset. Click the link to reset your password: ${resetLink}`;
-            sendPasswordResetEmail(email, subject, resetLink).then(() => {
-                res.status(200).json({
-                    message: "Password reset link sent to your email"
-                })
-            }).catch((err) => {
-                const error = new CustomError("Failed to send password reset email", 500);
-                next(error);
-                return;
+        const subject = "Password Reset Request";
+        const text = `You requested a password reset. Click the link to reset your password: ${resetLink}`;
+        sendPasswordResetEmail(email, subject, resetLink).then(() => {
+            res.status(200).json({
+                message: "Password reset link sent to your email"
             })
-        } catch (error) {
-            const err = new CustomError("An error occurred while processing your request", 500);
-            next(err);
+        }).catch((err) => {
+            const error = new CustomError("Failed to send password reset email", 500);
+            next(error);
             return;
-        }
+        })
+    } catch (error) {
+        const err = new CustomError("An error occurred while processing your request", 500);
+        next(err);
+        return;
+    }
 
 }
 
 
-const resetPassword = async(
-    req:Request<{},{},{password:string},{token:string, email:string}>,
-    res:Response,
-    next:NextFunction
-)=>{
+const resetPassword = async (
+    req: Request<{}, {}, { password: string }, { token: string, email: string }>,
+    res: Response,
+    next: NextFunction
+) => {
 
-   if (!req.query.token || !req.query.email) {
+    if (!req.query.token || !req.query.email) {
         const err = new CustomError("Token and email are required", 400);
         next(err);
         return;
@@ -154,7 +154,7 @@ const resetPassword = async(
         const user = await User.findOne({
             email: req.query.email,
             passwordResetToken: req.query.token,
-            passwordResetExpires: {$gt:new Date()}
+            passwordResetExpires: { $gt: new Date() }
         })
 
         if (!user) return next(new CustomError("Invalid or expired token", 400));
@@ -182,5 +182,5 @@ const resetPassword = async(
 
 }
 
-export { register, login, forgotPassword , resetPassword};
+export { register, login, forgotPassword, resetPassword };
 
