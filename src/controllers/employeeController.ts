@@ -18,10 +18,10 @@ const getCompanyEmployees = async (
       .populate('companies')
       .populate('department')
       .populate('role');
-      if(allEmployees.length === 0){
-        const err: any = new CustomError("No employees found for this company", 404);
-        return next(err);
-      }
+    if (allEmployees.length === 0) {
+      const err: any = new CustomError("No employees found for this company", 404);
+      return next(err);
+    }
     res.status(200).json(allEmployees);
   } catch (e: any) {
     return next(e);

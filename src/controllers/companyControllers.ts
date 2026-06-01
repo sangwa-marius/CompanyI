@@ -71,8 +71,6 @@ const getCompany = async (
     }
 }
 
-
-
 const addCompany = async (
     req: any,
     res: Response,
