@@ -17,7 +17,7 @@ const getCompanyDepartments = async (
             .populate('company')
             .populate('manager')
             .populate('members');
-       
+
         res.status(200).json({
             Total: departments.length,
             message: "Here are the departments found",
