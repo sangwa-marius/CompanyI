@@ -17,7 +17,7 @@ const getCompanyEmployees = async (
     const allEmployees = await Employee.find({ companies: { $in: [company] } })
       .populate('companies')
       .populate('department')
-      .populate('role');
+    
     if (allEmployees.length === 0) {
       const err: any = new CustomError("No employees found for this company", 404);
       return next(err);
@@ -45,7 +45,6 @@ const getEmployeeById = async (
     const employee = await Employee.findById(id)
       .populate('companies')
       .populate('department')
-      .populate('role',);
 
     if (!employee) {
       const error: any = new Error('No employee found');
@@ -111,7 +110,7 @@ const updateEmployeeById = async (req: Request<{ id: string }>, res: Response, n
     ).populate([
       { path: 'company', select: 'name code email phone' },
       { path: 'department', select: 'name' },
-      { path: 'role', select: 'name permissions' }
+
     ]);
 
     res.status(200).json({ message: "Employee updated", newEmployee: newEmployee });

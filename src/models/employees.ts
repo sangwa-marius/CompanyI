@@ -23,11 +23,7 @@ const employees = new mongoose.Schema({
 
     },
 
-    role: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Role',
-    },
-
+   
     status: {
         type: String,
         enum: ['ACTIVE', 'INACTIVE', 'SUSPENDED'],
