@@ -32,5 +32,7 @@ const updateDepartmentByIdSchema = Joi.object({
     })
 }).min(1);
 
-export {updateDepartmentByIdSchema,
-    addDepartmentSchema};
+export {
+    updateDepartmentByIdSchema,
+    addDepartmentSchema
+};
