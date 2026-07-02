@@ -1,28 +1,27 @@
 import { Request, Response, NextFunction } from 'express';
 import Employee from '../models/employees';
+import Company from '../models/company';
+import Department from '../models/department';
 import { CustomError } from '../utils/customError';
 
 
 const getCompanyEmployees = async (
-  req: Request<{ company: string }>,
+  req: any,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const company = req.params.company;
-    if (!company) {
-      const err: any = new CustomError("Company should be provided", 400);
+    const companyDoc = await Company.findOne({ _id: company, owner: req.userId });
+    if (!companyDoc) {
+      const err: any = new CustomError("Company not found or access denied", 403);
       return next(err);
     }
     const allEmployees = await Employee.find({ companies: { $in: [company] } })
       .populate('companies')
       .populate('department')
     
-    if (allEmployees.length === 0) {
-      const err: any = new CustomError("No employees found for this company", 404);
-      return next(err);
-    }
-    res.status(200).json(allEmployees);
+    res.status(200).json({ employees: allEmployees });
   } catch (e: any) {
     return next(e);
   }
@@ -30,7 +29,7 @@ const getCompanyEmployees = async (
 
 
 const getEmployeeById = async (
-  req: Request<{ id: string }, {}, {}, {}>,
+  req: any,
   res: Response,
   next: NextFunction) => {
 
@@ -51,6 +50,13 @@ const getEmployeeById = async (
       error.status = 404;
       return next(error);
     }
+    const companyIds = employee.companies?.map((c: any) => c._id) || [];
+    const hasAccess = await Company.exists({ _id: { $in: companyIds }, owner: req.userId });
+    if (!hasAccess) {
+      const error: any = new Error('Access denied');
+      error.status = 403;
+      return next(error);
+    }
     return res.status(200).json(employee);
   } catch (e: any) {
     e.status = 500;
@@ -59,37 +65,56 @@ const getEmployeeById = async (
 };
 
 const addEmployee = async (
-  req: Request,
+  req: any,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const employeeExists = await Employee.findOne({ email: req.body.email }) as any;
+    const { email, company, department, status, hiredAt, names, phone } = req.body;
+    const companyDoc = await Company.findOne({ _id: company, owner: req.userId });
+    if (!companyDoc) {
+      const err: any = new CustomError("Company not found or access denied", 403);
+      return next(err);
+    }
+    const employeeExists = await Employee.findOne({ email }).exec();
     if (employeeExists) {
       await Employee.updateOne(
         { _id: employeeExists._id },
-        { $addToSet: { companies: req.body.company } }
+        { $addToSet: { companies: company } }
       );
-
-      const newEmployee = await Employee.findOne({ email: req.body.email })
-      return res.status(201).json({ message: "Employee added sucessfully", newEmployee });
+      const updated = await Employee.findById(employeeExists._id)
+        .populate('companies')
+        .populate('department');
+      return res.status(200).json({ message: "Employee added successfully", newEmployee: updated });
     }
-    await Employee.create(req.body);
-    await Employee.updateOne(
-      { email: req.body.email },
-      { $addToSet: { companies: req.body.company } }
-    )
-    const newEmployee = await Employee.findOne({ email: req.body.email })
+    
+    const newEmployee = await Employee.create({
+      names,
+      email,
+      phone,
+      department: department || undefined,
+      status,
+      hiredAt: hiredAt || undefined,
+      companies: [company]
+    });
 
-
-    res.status(201).json({ message: "Employee added successfully", newEmployee })
+    if (department) {
+      await Department.findByIdAndUpdate(department, {
+        $addToSet: { members: newEmployee._id }
+      });
+    }
+    
+    const populated = await Employee.findById(newEmployee._id)
+      .populate('companies')
+      .populate('department');
+    
+    res.status(201).json({ message: "Employee added successfully", newEmployee: populated });
   } catch (error: any) {
     return next(error);
-
   }
-}
+};
 
-const updateEmployeeById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
+const updateEmployeeById = async (req: any, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
     if (!id) {
@@ -98,20 +123,44 @@ const updateEmployeeById = async (req: Request<{ id: string }>, res: Response, n
       return next(error);
     }
 
-    if (!(await Employee.findOne({ _id: id }))) {
+    const employee = await Employee.findById(id);
+    if (!employee) {
       const error: any = new Error('No Employee found');
       error.status = 400;
       return next(error);
     }
+    const companyIds = employee.companies || [];
+    const hasAccess = await Company.exists({ _id: { $in: companyIds }, owner: req.userId });
+    if (!hasAccess) {
+      const error: any = new Error('Access denied');
+      error.status = 403;
+      return next(error);
+    }
+    const newDepartmentId = req.body.department || undefined;
+    const oldDepartmentId = employee.department || undefined;
+
     const newEmployee = await Employee.findByIdAndUpdate(
       id,
-      req.body,
+      { ...req.body, department: newDepartmentId },
       { new: true, runValidators: true }
     ).populate([
-      { path: 'company', select: 'name code email phone' },
-      { path: 'department', select: 'name' },
+      { path: 'companies' },
+      { path: 'department' },
 
     ]);
+
+    if (String(oldDepartmentId || '') !== String(newDepartmentId || '')) {
+      if (oldDepartmentId) {
+        await Department.findByIdAndUpdate(oldDepartmentId, {
+          $pull: { members: employee._id }
+        });
+      }
+      if (newDepartmentId) {
+        await Department.findByIdAndUpdate(newDepartmentId, {
+          $addToSet: { members: employee._id }
+        });
+      }
+    }
 
     res.status(200).json({ message: "Employee updated", newEmployee: newEmployee });
 
@@ -120,19 +169,35 @@ const updateEmployeeById = async (req: Request<{ id: string }>, res: Response, n
   }
 }
 
-const deleteEmployeeById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
+const deleteEmployeeById = async (req: any, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
-    const company = req.body.company
     if (!id) {
       const error: any = new Error('provide the id');
       error.status = 400;
       return next(error);
     }
-    await Employee.findByIdAndUpdate(
-      id,
-      { $pull: { companies: company } }
-    );
+    const employee = await Employee.findById(id);
+    if (!employee) {
+      const error: any = new Error('No employee found');
+      error.status = 404;
+      return next(error);
+    }
+    const companyIds = employee.companies || [];
+    const hasAccess = await Company.exists({ _id: { $in: companyIds }, owner: req.userId });
+    if (!hasAccess) {
+      const error: any = new Error('Access denied');
+      error.status = 403;
+      return next(error);
+    }
+    await Employee.findByIdAndDelete(id);
+
+    if (employee.department) {
+      await Department.findByIdAndUpdate(employee.department, {
+        $pull: { members: employee._id }
+      });
+    }
+
     res.status(200).json({ message: "Employee removed successfully" })
   } catch (error: any) {
     return next(error)
