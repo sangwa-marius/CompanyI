@@ -44,7 +44,8 @@ const getDepartmentById = async (
         }
         const department = await Department.findById(id)
             .populate('company')
-            .populate('manager');
+            .populate('manager')
+            .populate('members');
         if (!department) {
             const err: any = new CustomError("No department found", 404);
             return next(err);
