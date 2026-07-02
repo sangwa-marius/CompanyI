@@ -167,6 +167,43 @@ const addMemberToProject = async (
     }
 }
 
+const bulkAddMembersToProject = async (
+    req: any,
+    res: Response,
+    next: NextFunction
+) => {
+    const { projectId } = req.params;
+    const { members } = req.body;
+    if (!projectId || !Array.isArray(members) || members.length === 0) {
+        return next(new CustomError('Provide the project id and at least one member id', 400));
+    }
+    const project = await Project.findById(projectId);
+    if (!project) {
+        return next(new CustomError(`No project with id ${projectId}`, 400));
+    }
+    
+    const companyDoc = await Company.findOne({ _id: project.company, owner: req.userId });
+    if (!companyDoc) {
+        return next(new CustomError('Access denied', 403));
+    }
+
+    const validEmployees = await Employee.find({ _id: { $in: members } });
+    if (validEmployees.length !== members.length) {
+        return next(new CustomError('One or more employees not found', 400));
+    }
+
+    try {
+        const newProject = await Project.findByIdAndUpdate(
+            projectId,
+            { $addToSet: { members: { $each: members } } },
+            { new: true }
+        );
+        res.status(200).json({ message: "Members added to project successfully", newProject });
+    } catch (error) {
+        return next(new CustomError('Failed to add members to project', 500));
+    }
+}
+
 
 const deleteProjectById = async (req: any, res: Response, next: NextFunction) => {
     try {
@@ -202,5 +239,6 @@ export {
     addProject,
     updateProjectById,
     deleteProjectById,
-    addMemberToProject
+    addMemberToProject,
+    bulkAddMembersToProject
 };
