@@ -10,6 +10,7 @@ router.get('/get-all-company-projects/:companyId', auth, project.getAllCompanyPr
 router.get('/get-project/:id', auth, project.getProjectById);
 router.post('/add-project', auth, validate(addProjectSchema), project.addProject);
 router.post('/add-member-to-project/:projectId', auth, project.addMemberToProject);
+router.post('/bulk-add-members/:projectId', auth, project.bulkAddMembersToProject);
 router.put('/update-project/:id', auth, validate(updateProjectSchema), project.updateProjectById);
 router.delete('/delete-project/:id', auth, project.deleteProjectById);
 
