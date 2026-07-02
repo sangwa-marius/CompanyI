@@ -30,13 +30,21 @@ const register = async (
             email,
             password: hashed
         });
+        const token = jwt.sign(
+            { id: newUser._id, email: newUser.email },
+            process.env.SUPER_SECRET_KEY,
+            { expiresIn: '7d' }
+        );
         const subject: string = "Welcoming You"
 
         sendWelcomeEmail(email, subject, username).then(() => {
             res.status(200).json({
                 message: "registered successfully",
+                token,
                 newUser
             })
+        }).catch((err) => {
+            return next(new CustomError("Failed to send welcome email", 500))
         })
     } catch (e: any) {
         return next(e);
@@ -52,7 +60,7 @@ const login = async (
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-            const err = new CustomError("email and password are require", 400);
+            const err = new CustomError("email and password are required", 400);
             next(err);
             return;
         }
@@ -71,7 +79,7 @@ const login = async (
                 { expiresIn: '7d' }
             );
             return res.status(200).json({
-                message: "Login successfull",
+                message: "Login successful",
                 token,
                 loggedInUser
             });

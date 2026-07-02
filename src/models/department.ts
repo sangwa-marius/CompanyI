@@ -17,6 +17,12 @@ const departmentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee',
     },
+
+    members: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Employee',
+        default: []
+    }],
 }, { timestamps: true });
 
 

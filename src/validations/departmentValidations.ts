@@ -13,10 +13,8 @@ const addDepartmentSchema = Joi.object({
         'any.required': 'Company is required'
     }),
 
-    manager: Joi.string().trim().required().messages({
-        'string.base': 'Manager must be a string',
-        'string.empty': 'Manager cannot be empty',
-        'any.required': 'Manager is required'
+    manager: Joi.string().trim().optional().messages({
+        'string.base': 'Manager must be a string'
     })
 });
 

@@ -1,16 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import Department from '../models/department';
+import Company from '../models/company';
 import { CustomError } from '../utils/customError';
 
 const getCompanyDepartments = async (
-    req: Request<{ company: string }>,
+    req: any,
     res: Response,
     next: NextFunction
 ) => {
     try {
         const company = req.params.company;
-        if (!company) {
-            const err: any = new CustomError("The company is required", 400);
+        const companyDoc = await Company.findOne({ _id: company, owner: req.userId });
+        if (!companyDoc) {
+            const err: any = new CustomError("Company not found or access denied", 404);
             return next(err)
         }
         const departments = await Department.find({ company })
@@ -56,9 +58,14 @@ const getDepartmentById = async (
     }
 }
 
-const addDepartment = async (req: Request, res: Response, next: NextFunction) => {
+const addDepartment = async (req: any, res: Response, next: NextFunction) => {
     try {
         const { name, company, manager } = req.body;
+        const companyDoc = await Company.findOne({ _id: company, owner: req.userId });
+        if (!companyDoc) {
+            const err: any = new CustomError("Company not found or access denied", 404);
+            return next(err);
+        }
         const newDepartment = await Department.create({
             name,
             company,
@@ -73,9 +80,19 @@ const addDepartment = async (req: Request, res: Response, next: NextFunction) =>
 }
 
 
-const updateDepartmentById = async (req: Request, res: Response, next: NextFunction) => {
+const updateDepartmentById = async (req: any, res: Response, next: NextFunction) => {
     try {
         const id = req.params.id;
+        const department = await Department.findById(id).populate('company');
+        if (!department) {
+            const err: any = new CustomError("No department found", 404);
+            return next(err);
+        }
+        const company = await Company.findOne({ _id: department.company, owner: req.userId });
+        if (!company) {
+            const err: any = new CustomError("Access denied", 403);
+            return next(err);
+        }
         const newDepartment = await Department.findByIdAndUpdate(
             id,
             req.body,
@@ -91,15 +108,21 @@ const updateDepartmentById = async (req: Request, res: Response, next: NextFunct
 }
 
 
-const deleteDepartmentById = async (req: Request, res: Response, next: NextFunction) => {
+const deleteDepartmentById = async (req: any, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params as { id: string };
         if (!id) {
-            const error: any = new CustomError('id is require', 400)
+            const error: any = new CustomError('id is required', 400);
             return next(error);
         }
-        if (!(await Department.findOne({ id }))) {
-            const error: any = new CustomError('no department found', 404);
+        const department = await Department.findById(id).populate('company');
+        if (!department) {
+            const error: any = new CustomError('No department found', 404);
+            return next(error);
+        }
+        const company = await Company.findOne({ _id: department.company, owner: req.userId });
+        if (!company) {
+            const error: any = new CustomError('Access denied', 403);
             return next(error);
         }
 

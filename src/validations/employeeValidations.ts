@@ -9,14 +9,16 @@ const addEmployeeSchema = Joi.object({
         'string.email':'Invalid email format',
         'any.require':'Email is required'
     }),
-    phone: Joi.string().min(10).max(13).messages({
+    phone: Joi.string().optional().allow('').messages({
         'string.min':'phone number must be atleast 10 characters long',
         'string.max':'phone number must be atmost 13 characters long'
     }),
     company: Joi.string().required().trim(),
-    department: Joi.string().trim(),
-    role: Joi.string().trim().default('ACTIVE'),
-    hiredAt: Joi.date().iso().min('2020-12-31').max('now')
+    department: Joi.string().trim().optional().allow(''),
+    status: Joi.string().trim().valid('ACTIVE', 'INACTIVE', 'SUSPENDED').default('ACTIVE'),
+    hiredAt: Joi.string().optional().allow('').messages({
+        'string.base': 'Hire date must be a string'
+    })
 });
 
 
@@ -29,14 +31,16 @@ const updateEmployeeByIdSchema = Joi.object({
         'string.email':'Invalid email format',
         'any.require':'Email is required'
     }),
-    phone: Joi.string().min(10).max(13).messages({
+    phone: Joi.string().optional().allow('').messages({
         'string.min':'phone number must be atleast 10 characters long',
         'string.max':'phone number must be atmost 13 characters long'
     }),
     company: Joi.string().trim(),
-    department: Joi.string().trim(),
-    role: Joi.string().trim().default('ACTIVE'),
-    hiredAt: Joi.date().iso().min('2020-12-31').max('now')
+    department: Joi.string().trim().optional().allow(''),
+    status: Joi.string().trim().valid('ACTIVE', 'INACTIVE', 'SUSPENDED'),
+    hiredAt: Joi.string().optional().allow('').messages({
+        'string.base': 'Hire date must be a string'
+    })
 });
 
 

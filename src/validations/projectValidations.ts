@@ -3,17 +3,18 @@ import * as Joi from 'joi';
 const addProjectSchema = Joi.object({
     name: Joi.string().required().trim(),
     company: Joi.string().required().trim(),
-    manager: Joi.string().required().trim(),
-    members: Joi.string().trim(),
-    status: Joi.string().trim().default('PLANNED')
+    description: Joi.string().trim(),
+    manager: Joi.string().trim().optional(),
+    members: Joi.array().items(Joi.string()).single().optional(),
+    status: Joi.string().trim().valid('PLANNED', 'ONGOING', 'COMPLETED').default('PLANNED')
 });
 
 const updateProjectSchema = Joi.object({
     name: Joi.string().trim(),
     company: Joi.string().trim(),
-    manager: Joi.string().trim(),
-    members: Joi.string().trim(),
-    status: Joi.string().trim().default('PLANNED')
+    manager: Joi.string().trim().optional(),
+    members: Joi.array().items(Joi.string()).single().optional(),
+    status: Joi.string().trim().valid('PLANNED', 'ONGOING', 'COMPLETED')
 })
 
 
