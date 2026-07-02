@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 export const sendWelcomeEmail = async (to: string, subject: string, username: string) => {
     try {
         const emailOptions = {
-            "from": `<${process.env.APPNAME}>`,
+            "from": `"${process.env.APPNAME}" <${process.env.EMAIL_USER}>`,
             "to": to,
             "subject": subject,
             "text": `Welcome ${username}! We wanna thank you for registering for Company`
@@ -29,7 +29,7 @@ export const sendWelcomeEmail = async (to: string, subject: string, username: st
 export const sendPasswordResetEmail = async (to: string, subject: string, resetLink: string) => {
     try {
         const emailOptions = {
-            "from": `<${process.env.APPNAME}>`,
+            "from": `"${process.env.APPNAME}" <${process.env.EMAIL_USER}>`,
             "to": to,
             "subject": subject,
             "text": `You requested a password reset. Click the link to reset your password: ${resetLink}`
