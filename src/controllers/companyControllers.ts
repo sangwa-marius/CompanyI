@@ -8,13 +8,13 @@ const getAllCompanies = async (req: Request, res: Response, next: NextFunction) 
     try {
         const companies = await Company.find();
 
-     
-            res.status(200).json({
-                Total: companies.length,
-                message: "Here are the companies found",
-                companies
-            })
-    
+
+        res.status(200).json({
+            Total: companies.length,
+            message: "Here are the companies found",
+            companies
+        })
+
     } catch (e: any) {
         return next(e);
 
