@@ -20,7 +20,7 @@ const getCompanyEmployees = async (
     const allEmployees = await Employee.find({ companies: { $in: [company] } })
       .populate('companies')
       .populate('department')
-    
+
     res.status(200).json({ employees: allEmployees });
   } catch (e: any) {
     return next(e);
@@ -87,7 +87,7 @@ const addEmployee = async (
         .populate('department');
       return res.status(200).json({ message: "Employee added successfully", newEmployee: updated });
     }
-    
+
     const newEmployee = await Employee.create({
       names,
       email,
@@ -103,11 +103,11 @@ const addEmployee = async (
         $addToSet: { members: newEmployee._id }
       });
     }
-    
+
     const populated = await Employee.findById(newEmployee._id)
       .populate('companies')
       .populate('department');
-    
+
     res.status(201).json({ message: "Employee added successfully", newEmployee: populated });
   } catch (error: any) {
     return next(error);
