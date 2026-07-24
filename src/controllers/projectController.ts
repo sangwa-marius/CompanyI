@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 const getAllCompanyProjects = async (req: any, res: Response, next: NextFunction) => {
     try {
         const id = req.params.companyId;
-        if(!mongoose.Types.ObjectId.isValid(id)){
+        if (!mongoose.Types.ObjectId.isValid(id)) {
             const error: any = new CustomError('Provide a valid company id', 400);
             return next(error);
         }
@@ -17,17 +17,17 @@ const getAllCompanyProjects = async (req: any, res: Response, next: NextFunction
             const error: any = new CustomError("Company not found or access denied", 403);
             return next(error);
         }
-        const projects = await Project.find({company: req.params.companyId})
+        const projects = await Project.find({ company: req.params.companyId })
             .populate('company')
             .populate('manager')
             .populate('members');
-        
-            res.status(200).json({
-                Total: projects.length,
-                message: "Here are the projects found",
-                projects
-            })
-        
+
+        res.status(200).json({
+            Total: projects.length,
+            message: "Here are the projects found",
+            projects
+        })
+
     } catch (e: any) {
         const error: any = new CustomError(e.message, 500);
         return next(error);
@@ -50,18 +50,18 @@ const getProjectById = async (req: any, res: Response, next: NextFunction) => {
             .populate('company')
             .populate('manager')
             .populate('members');
-        
+
         if (!project) {
             const error: any = new CustomError('Project not found', 404);
             return next(error);
         }
-        
+
         const companyDoc = await Company.findOne({ _id: project.company, owner: req.userId });
         if (!companyDoc) {
             const error: any = new CustomError('Access denied', 403);
             return next(error);
         }
-        
+
         res.status(200).json({
             message: "Here is the project found",
             project
@@ -145,12 +145,12 @@ const addMemberToProject = async (
     if (!project) {
         return next(new CustomError(`No project with id ${projectId}`, 400));
     }
-    
+
     const companyDoc = await Company.findOne({ _id: project.company, owner: req.userId });
     if (!companyDoc) {
         return next(new CustomError('Access denied', 403));
     }
-    
+
     if (!(await Employee.findById(member))) {
         return next(new CustomError(`No employee with id ${member}`, 400));
     }
@@ -181,7 +181,7 @@ const bulkAddMembersToProject = async (
     if (!project) {
         return next(new CustomError(`No project with id ${projectId}`, 400));
     }
-    
+
     const companyDoc = await Company.findOne({ _id: project.company, owner: req.userId });
     if (!companyDoc) {
         return next(new CustomError('Access denied', 403));
@@ -218,7 +218,7 @@ const deleteProjectById = async (req: any, res: Response, next: NextFunction) =>
             const error: any = new CustomError(`No project with id ${id}`, 404);
             return next(error);
         }
-        
+
         const companyDoc = await Company.findOne({ _id: project.company, owner: req.userId });
         if (!companyDoc) {
             const error: any = new CustomError('Access denied', 403);
