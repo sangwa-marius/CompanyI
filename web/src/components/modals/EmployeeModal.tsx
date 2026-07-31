@@ -36,7 +36,7 @@ export default function EmployeeModal({
       setDepartment(
         typeof employee.department === "string"
           ? employee.department
-          : employee.department?._id || ""
+          : employee.department?._id || "",
       );
       setCompany(employee.companies?.[0]?._id || "");
       setStatus(employee.status);
@@ -88,7 +88,7 @@ export default function EmployeeModal({
       setLoadingDepartments(true);
       try {
         const res = await api.get(
-          `/department/get-company-departments/${company}`
+          `/department/get-company-departments/${company}`,
         );
         if (!cancelled) {
           setDepartments(res.data.departments || []);
@@ -181,7 +181,9 @@ export default function EmployeeModal({
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-text mb-1.5">Names *</label>
+            <label className="block text-sm font-medium text-text mb-1.5">
+              Names *
+            </label>
             <input
               type="text"
               value={names}
@@ -193,7 +195,9 @@ export default function EmployeeModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text mb-1.5">Email *</label>
+            <label className="block text-sm font-medium text-text mb-1.5">
+              Email *
+            </label>
             <input
               type="email"
               value={email}
@@ -205,7 +209,9 @@ export default function EmployeeModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text mb-1.5">Phone</label>
+            <label className="block text-sm font-medium text-text mb-1.5">
+              Phone
+            </label>
             <input
               type="tel"
               value={phone}
@@ -216,15 +222,19 @@ export default function EmployeeModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text mb-1.5">Company *</label>
+            <label className="block text-sm font-medium text-text mb-1.5">
+              Company *
+            </label>
             <select
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               required
-               disabled={loadingCompanies}
-               className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
+              disabled={loadingCompanies}
+              className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
             >
-              <option value="">{loadingCompanies ? "Loading companies..." : "Select a company"}</option>
+              <option value="">
+                {loadingCompanies ? "Loading companies..." : "Select a company"}
+              </option>
               {companies.map((c) => (
                 <option key={c._id} value={c._id}>
                   {c.name}
@@ -234,19 +244,21 @@ export default function EmployeeModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text mb-1.5">Department</label>
+            <label className="block text-sm font-medium text-text mb-1.5">
+              Department
+            </label>
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-               disabled={!company || loadingDepartments}
-               className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
+              disabled={!company || loadingDepartments}
+              className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
             >
               <option value="">
                 {!company
                   ? "Select a company first"
                   : loadingDepartments
-                  ? "Loading departments..."
-                  : "Select a department"}
+                    ? "Loading departments..."
+                    : "Select a department"}
               </option>
               {departments.map((dept) => (
                 <option key={dept._id} value={dept._id}>
@@ -257,7 +269,9 @@ export default function EmployeeModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text mb-1.5">Status</label>
+            <label className="block text-sm font-medium text-text mb-1.5">
+              Status
+            </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as EmployeeStatus)}
@@ -270,7 +284,9 @@ export default function EmployeeModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text mb-1.5">Hire Date</label>
+            <label className="block text-sm font-medium text-text mb-1.5">
+              Hire Date
+            </label>
             <input
               type="date"
               value={hiredAt}

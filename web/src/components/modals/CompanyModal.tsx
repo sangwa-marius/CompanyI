@@ -62,7 +62,7 @@ export default function CompanyModal({
       onClose();
     } catch {
       toast.error(
-        company ? "Failed to update company" : "Failed to add company"
+        company ? "Failed to update company" : "Failed to add company",
       );
     }
   };
@@ -171,10 +171,7 @@ export default function CompanyModal({
               }
               className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
             />
-            <label
-              htmlFor="isActive"
-              className="text-sm font-medium text-text"
-            >
+            <label htmlFor="isActive" className="text-sm font-medium text-text">
               Active
             </label>
           </div>

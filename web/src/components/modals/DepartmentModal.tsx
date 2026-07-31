@@ -30,12 +30,12 @@ export default function DepartmentModal({
       setCompany(
         typeof department.company === "string"
           ? department.company
-          : department.company?._id || ""
+          : department.company?._id || "",
       );
       setManager(
         typeof department.manager === "string"
           ? department.manager
-          : department.manager?._id || ""
+          : department.manager?._id || "",
       );
     } else {
       setName("");
@@ -135,7 +135,7 @@ export default function DepartmentModal({
       onClose();
     } catch {
       toast.error(
-        department ? "Failed to update department" : "Failed to add department"
+        department ? "Failed to update department" : "Failed to add department",
       );
     }
   };
@@ -191,10 +191,12 @@ export default function DepartmentModal({
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               required
-               disabled={loadingCompanies}
-               className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
+              disabled={loadingCompanies}
+              className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
             >
-              <option value="">{loadingCompanies ? "Loading companies..." : "Select a company"}</option>
+              <option value="">
+                {loadingCompanies ? "Loading companies..." : "Select a company"}
+              </option>
               {companies.map((c) => (
                 <option key={c._id} value={c._id}>
                   {c.name}
@@ -209,15 +211,15 @@ export default function DepartmentModal({
             <select
               value={manager}
               onChange={(e) => setManager(e.target.value)}
-               disabled={!company || loadingEmployees}
-               className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
+              disabled={!company || loadingEmployees}
+              className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
             >
               <option value="">
                 {!company
                   ? "Select a company first"
                   : loadingEmployees
-                  ? "Loading employees..."
-                  : "Select a manager"}
+                    ? "Loading employees..."
+                    : "Select a manager"}
               </option>
               {employees.map((emp) => (
                 <option key={emp._id} value={emp._id}>
