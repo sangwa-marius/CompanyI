@@ -33,12 +33,12 @@ export default function ProjectModal({
       setCompany(
         typeof project.company === "string"
           ? project.company
-          : project.company?._id || ""
+          : project.company?._id || "",
       );
       setManager(
         typeof project.manager === "string"
           ? project.manager
-          : project.manager?._id || ""
+          : project.manager?._id || "",
       );
       setStatus(project.status);
     } else {
@@ -145,7 +145,7 @@ export default function ProjectModal({
       onClose();
     } catch {
       toast.error(
-        project ? "Failed to update project" : "Failed to add project"
+        project ? "Failed to update project" : "Failed to add project",
       );
     }
   };
@@ -203,7 +203,7 @@ export default function ProjectModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-               className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition resize-none"
+              className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition resize-none"
               placeholder="Project description"
             />
           </div>
@@ -215,10 +215,12 @@ export default function ProjectModal({
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               required
-               disabled={loadingCompanies}
-               className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
+              disabled={loadingCompanies}
+              className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
             >
-              <option value="">{loadingCompanies ? "Loading companies..." : "Select a company"}</option>
+              <option value="">
+                {loadingCompanies ? "Loading companies..." : "Select a company"}
+              </option>
               {companies.map((c) => (
                 <option key={c._id} value={c._id}>
                   {c.name}
@@ -233,15 +235,15 @@ export default function ProjectModal({
             <select
               value={manager}
               onChange={(e) => setManager(e.target.value)}
-               disabled={!company || loadingEmployees}
-               className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
+              disabled={!company || loadingEmployees}
+              className="w-full px-4 py-2.5 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-60"
             >
               <option value="">
                 {!company
                   ? "Select a company first"
                   : loadingEmployees
-                  ? "Loading employees..."
-                  : "Select a manager"}
+                    ? "Loading employees..."
+                    : "Select a manager"}
               </option>
               {employees.map((emp) => (
                 <option key={emp._id} value={emp._id}>
