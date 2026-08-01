@@ -12,5 +12,7 @@ const updateRoleSchema = Joi.object({
     company: Joi.string().trim()
 })
 
-export {addRoleSchema,
-    updateRoleSchema};
+export {
+    addRoleSchema,
+    updateRoleSchema
+};
