@@ -18,5 +18,7 @@ const updateProjectSchema = Joi.object({
 })
 
 
-export {addProjectSchema,
-    updateProjectSchema};
+export {
+    addProjectSchema,
+    updateProjectSchema
+};
