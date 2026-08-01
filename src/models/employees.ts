@@ -23,7 +23,7 @@ const employees = new mongoose.Schema({
 
     },
 
-   
+
     status: {
         type: String,
         enum: ['ACTIVE', 'INACTIVE', 'SUSPENDED'],
