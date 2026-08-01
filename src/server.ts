@@ -15,15 +15,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 app.use(cors({
-   origin:"*",
-   allowedHeaders: ["Authorization", "Content-Type"],
+    origin: "*",
+    allowedHeaders: ["Authorization", "Content-Type"],
 }))
 app.use('/api', router)
 app.use(notFound)
 app.use(errorHandler)
 connectDB().then(() => {
     app.listen(port, async () => {
-       console.log(`Server running on port ${port}`)
+        console.log(`Server running on port ${port}`)
     })
 }).catch((error) => {
     console.error("Failed to start server:", error.message);
