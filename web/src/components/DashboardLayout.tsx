@@ -3,7 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, LayoutDashboard, Building2, Users, FolderTree, Briefcase, Settings, LogOut } from "lucide-react";
+import {
+  Menu,
+  X,
+  LayoutDashboard,
+  Building2,
+  Users,
+  FolderTree,
+  Briefcase,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const navItems = [
@@ -53,16 +63,17 @@ export default function DashboardLayout({
         <nav className="p-4 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                   isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted hover:bg-background-alt hover:text-text"
+                  isActive
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted hover:bg-background-alt hover:text-text"
                 }`}
               >
                 <Icon className="h-5 w-5" />
@@ -74,7 +85,9 @@ export default function DashboardLayout({
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border space-y-3">
           <div className="px-4">
-            <p className="text-sm font-medium text-text truncate">{user?.username}</p>
+            <p className="text-sm font-medium text-text truncate">
+              {user?.username}
+            </p>
             <p className="text-xs text-muted truncate">{user?.email}</p>
           </div>
           <button
@@ -101,9 +114,7 @@ export default function DashboardLayout({
           <h1 className="text-lg font-semibold text-text truncate">{title}</h1>
         </header>
 
-        <main className="flex-1 overflow-auto p-4 lg:p-8">
-          {children}
-        </main>
+        <main className="flex-1 overflow-auto p-4 lg:p-8">{children}</main>
       </div>
     </div>
   );
