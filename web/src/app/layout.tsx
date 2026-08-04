@@ -22,7 +22,8 @@ const brandFont = Outfit({
 
 export const metadata: Metadata = {
   title: "Companyi - Manage Companies, Employees, Departments & Projects",
-  description: "Companyi is a modern enterprise management platform that helps you organize companies, manage employees, structure departments, and track projects in one place.",
+  description:
+    "Companyi is a modern enterprise management platform that helps you organize companies, manage employees, structure departments, and track projects in one place.",
 };
 
 export default function RootLayout({
