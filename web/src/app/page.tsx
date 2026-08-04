@@ -4,7 +4,17 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { ArrowRight, Building2, Users, FolderTree, Briefcase, Shield, Zap, Globe2, BarChart3 } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  Users,
+  FolderTree,
+  Briefcase,
+  Shield,
+  Zap,
+  Globe2,
+  BarChart3,
+} from "lucide-react";
 
 export default function Home() {
   const { user, isLoading } = useAuth();
@@ -43,13 +53,28 @@ function Navigation() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white">
               <Building2 className="h-5 w-5" />
             </div>
-              <span className="text-xl font-brand text-primary">Companyi</span>
+            <span className="text-xl font-brand text-primary">Companyi</span>
           </div>
 
           <nav className="hidden items-center gap-8 md:flex">
-             <a href="#features" className="text-sm font-medium text-gray-600 hover:text-primary">Features</a>
-             <a href="#how-it-works" className="text-sm font-medium text-gray-600 hover:text-primary">How it works</a>
-             <a href="#testimonials" className="text-sm font-medium text-gray-600 hover:text-primary">Testimonials</a>
+            <a
+              href="#features"
+              className="text-sm font-medium text-gray-600 hover:text-primary"
+            >
+              Features
+            </a>
+            <a
+              href="#how-it-works"
+              className="text-sm font-medium text-gray-600 hover:text-primary"
+            >
+              How it works
+            </a>
+            <a
+              href="#testimonials"
+              className="text-sm font-medium text-gray-600 hover:text-primary"
+            >
+              Testimonials
+            </a>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -58,16 +83,16 @@ function Navigation() {
               className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               Sign in
-          </Link>
-          <Link
-            href="/auth/register"
-            className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-medium text-primary hover:bg-gray-100"
-          >
-            Create your account
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+            </Link>
+            <Link
+              href="/auth/register"
+              className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-medium text-primary hover:bg-gray-100"
+            >
+              Create your account
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
-      </div>
       </div>
     </header>
   );
@@ -90,10 +115,11 @@ function Hero() {
               <span className="block text-primary">in one place</span>
             </h1>
 
-             <p className="text-lg text-gray-600 leading-relaxed">
-              <span className="font-brand">Companyi</span> brings together companies, employees, departments, and projects
-              into a unified workspace. Make faster decisions, keep teams aligned, and
-              grow with clarity.
+            <p className="text-lg text-gray-600 leading-relaxed">
+              <span className="font-brand">Companyi</span> brings together
+              companies, employees, departments, and projects into a unified
+              workspace. Make faster decisions, keep teams aligned, and grow
+              with clarity.
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -128,7 +154,7 @@ function Hero() {
                     <span className="h-3 w-3 rounded-full bg-yellow-400" />
                     <span className="h-3 w-3 rounded-full bg-green-400" />
                   </div>
-                   <p className="text-xs text-gray-400">Companyi dashboard</p>
+                  <p className="text-xs text-gray-400">Companyi dashboard</p>
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-3">
                   {[
@@ -137,9 +163,14 @@ function Hero() {
                     { label: "Departments", value: "48" },
                     { label: "Projects", value: "16" },
                   ].map((item) => (
-                    <div key={item.label} className="rounded-xl border border-gray-100 bg-gray-50/50 p-3">
+                    <div
+                      key={item.label}
+                      className="rounded-xl border border-gray-100 bg-gray-50/50 p-3"
+                    >
                       <p className="text-xs text-gray-500">{item.label}</p>
-                      <p className="text-lg font-semibold text-gray-900">{item.value}</p>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {item.value}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -147,7 +178,9 @@ function Hero() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-gray-500">Active projects</p>
-                      <p className="text-sm font-semibold text-gray-900">9 ongoing</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        9 ongoing
+                      </p>
                     </div>
                     <BarChart3 className="h-8 w-8 text-primary" />
                   </div>
@@ -178,9 +211,13 @@ function TrustBar() {
           Trusted by modern companies to manage people and work
         </p>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-60 grayscale">
-          {["Acme Corp", "Globex", "Initech", "Umbrella", "Stark"].map((name) => (
-            <span key={name} className="text-lg font-semibold text-gray-600">{name}</span>
-          ))}
+          {["Acme Corp", "Globex", "Initech", "Umbrella", "Stark"].map(
+            (name) => (
+              <span key={name} className="text-lg font-semibold text-gray-600">
+                {name}
+              </span>
+            ),
+          )}
         </div>
       </div>
     </section>
@@ -223,7 +260,7 @@ function Features() {
       icon: Globe2,
       title: "One unified platform",
       description:
-        "Stop juggling spreadsheets and disconnected tools. Every company, employee, and project lives in <span className=\"font-brand\">Companyi</span>.",
+        'Stop juggling spreadsheets and disconnected tools. Every company, employee, and project lives in <span className="font-brand">Companyi</span>.',
     },
   ];
 
@@ -236,7 +273,8 @@ function Features() {
             Everything you need to manage your organization
           </h2>
           <p className="mt-3 text-gray-600">
-            From company setup to project delivery, <span className="font-brand">Companyi</span> gives you a complete
+            From company setup to project delivery,{" "}
+            <span className="font-brand">Companyi</span> gives you a complete
             toolset designed for real teams.
           </p>
         </div>
@@ -252,8 +290,13 @@ function Features() {
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="mt-4 text-base font-semibold text-gray-900">{feature.title}</h3>
-                <p className="mt-2 text-sm text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: feature.description }} />
+                <h3 className="mt-4 text-base font-semibold text-gray-900">
+                  {feature.title}
+                </h3>
+                <p
+                  className="mt-2 text-sm text-gray-600 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: feature.description }}
+                />
               </div>
             );
           })}
@@ -286,7 +329,10 @@ function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="border-t border-gray-100 bg-gray-50/60/30 py-20">
+    <section
+      id="how-it-works"
+      className="border-t border-gray-100 bg-gray-50/60/30 py-20"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
           <p className="text-sm font-medium text-primary">How it works</p>
@@ -305,9 +351,15 @@ function HowItWorks() {
               key={step.number}
               className="relative rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
             >
-              <span className="text-xs font-semibold text-primary">{step.number}</span>
-              <h3 className="mt-2 text-base font-semibold text-gray-900">{step.title}</h3>
-              <p className="mt-2 text-sm text-gray-600 leading-relaxed">{step.description}</p>
+              <span className="text-xs font-semibold text-primary">
+                {step.number}
+              </span>
+              <h3 className="mt-2 text-base font-semibold text-gray-900">
+                {step.title}
+              </h3>
+              <p className="mt-2 text-sm text-gray-600 leading-relaxed">
+                {step.description}
+              </p>
             </div>
           ))}
         </div>
@@ -354,8 +406,8 @@ function Testimonials() {
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {[
             {
-               quote:
-                 "<span className=\"font-brand\">Companyi</span> replaced three separate tools for us. Having employees, departments, and projects in one place is a game changer.",
+              quote:
+                '<span className="font-brand">Companyi</span> replaced three separate tools for us. Having employees, departments, and projects in one place is a game changer.',
               author: "Sarah Chen",
               role: "Head of Operations, Meridian",
             },
@@ -376,9 +428,13 @@ function Testimonials() {
               key={item.author}
               className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
             >
-              <p className="text-sm text-gray-700 leading-relaxed"><span dangerouslySetInnerHTML={{ __html: `"${item.quote}"` }} /></p>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                <span dangerouslySetInnerHTML={{ __html: `"${item.quote}"` }} />
+              </p>
               <div className="mt-5">
-                <p className="text-sm font-semibold text-gray-900">{item.author}</p>
+                <p className="text-sm font-semibold text-gray-900">
+                  {item.author}
+                </p>
                 <p className="text-xs text-gray-500">{item.role}</p>
               </div>
             </div>
@@ -423,9 +479,14 @@ function Footer() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
             <Building2 className="h-4 w-4" />
           </div>
-              <span className="text-base font-brand font-semibold text-primary">Companyi</span>
+          <span className="text-base font-brand font-semibold text-primary">
+            Companyi
+          </span>
         </div>
-         <p className="text-sm text-gray-500">© {new Date().getFullYear()} <span className="font-brand">Companyi</span>. All rights reserved.</p>
+        <p className="text-sm text-gray-500">
+          © {new Date().getFullYear()}{" "}
+          <span className="font-brand">Companyi</span>. All rights reserved.
+        </p>
       </div>
     </footer>
   );
