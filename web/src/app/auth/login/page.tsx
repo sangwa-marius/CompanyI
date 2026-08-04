@@ -123,7 +123,11 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-white transition-colors"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -139,11 +143,17 @@ export default function LoginPage() {
 
           <div className="mt-8 text-center text-xs text-gray-400">
             <span>Don&apos;t have an account? </span>
-            <Link href="/auth/register" className="text-white font-medium hover:underline">
+            <Link
+              href="/auth/register"
+              className="text-white font-medium hover:underline"
+            >
               Sign up
             </Link>
             <span className="mx-2">·</span>
-            <Link href="/auth/forgot-password" className="text-white hover:underline">
+            <Link
+              href="/auth/forgot-password"
+              className="text-white hover:underline"
+            >
               Forgot password?
             </Link>
           </div>
