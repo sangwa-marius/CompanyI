@@ -1,0 +1,24 @@
+{
+  "name": "companyi",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "CompanyI"
+  ],
+  "homepage": "https://github.com/sangwa-marius/CompanyI#readme",
+  "bugs": {
+    "url": "https://github.com/sangwa-marius/CompanyI/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sangwa-marius/CompanyI.git"
+  },
+  "license": "MIT",
+  "author": "Marius",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {}
+}

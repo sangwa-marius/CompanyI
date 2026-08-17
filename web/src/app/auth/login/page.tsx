@@ -38,19 +38,19 @@ export default function LoginPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await login(email, password);
-      toast.success("Signed in successfully");
-      router.push("/dashboard");
-    } catch {
-      toast.error("Invalid email or password");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+   const handleSubmit = async (e: React.FormEvent) => {
+     e.preventDefault();
+     setIsSubmitting(true);
+     try {
+       await login(email, password);
+       toast.success("Signed in successfully");
+       router.push("/dashboard");
+     } catch (error: any) {
+       toast.error(error?.response?.data?.message || "Invalid email or password");
+     } finally {
+       setIsSubmitting(false);
+     }
+   };
 
   if (isLoading) {
     return (
@@ -88,7 +88,7 @@ export default function LoginPage() {
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 mb-4">
               <Building2 className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-2xl font-brand text-white">Companyi</h1>
+            <h1 className="text-2xl font-brand text-white">CompanyI</h1>
             <p className="mt-2 text-sm text-gray-300">
               {SLIDES[current]?.title}
             </p>

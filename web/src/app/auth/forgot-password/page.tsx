@@ -11,19 +11,19 @@ export default function ForgotPasswordPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isLoading } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await api.post("/auth/forgot-password", { email });
-      toast.success("Reset link sent");
-      setEmail("");
-    } catch {
-      toast.error("Failed to send reset link");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+   const handleSubmit = async (e: React.FormEvent) => {
+     e.preventDefault();
+     setIsSubmitting(true);
+     try {
+       await api.post("/auth/forgot-password", { email });
+       toast.success("Reset link sent");
+       setEmail("");
+     } catch (error: any) {
+       toast.error(error?.response?.data?.message || "Failed to send reset link");
+     } finally {
+       setIsSubmitting(false);
+     }
+   };
 
   if (isLoading) {
     return (

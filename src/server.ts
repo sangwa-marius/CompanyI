@@ -6,7 +6,7 @@ import router from './routes/index';
 import connectDB from './config/db';
 import cors from 'cors'
 import * as dotenv from 'dotenv';
-dotenv.config({ debug: true });
+dotenv.config({ path: '../.env', debug: true });
 
 
 const port = process.env.PORT || 8080;
