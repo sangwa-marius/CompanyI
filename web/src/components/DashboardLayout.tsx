@@ -51,7 +51,7 @@ export default function DashboardLayout({
         }`}
       >
         <div className="flex items-center justify-between h-16 px-6 border-b border-border">
-          <span className="text-xl font-brand text-primary">Companyi</span>
+          <span className="text-xl font-brand text-primary">CompanyI</span>
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden text-muted hover:text-text"

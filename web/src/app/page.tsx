@@ -53,7 +53,7 @@ function Navigation() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white">
               <Building2 className="h-5 w-5" />
             </div>
-            <span className="text-xl font-brand text-primary">Companyi</span>
+            <span className="text-xl font-brand text-primary">CompanyI</span>
           </div>
 
           <nav className="hidden items-center gap-8 md:flex">
@@ -116,7 +116,7 @@ function Hero() {
             </h1>
 
             <p className="text-lg text-gray-600 leading-relaxed">
-              <span className="font-brand">Companyi</span> brings together
+              <span className="font-brand">CompanyI</span> brings together
               companies, employees, departments, and projects into a unified
               workspace. Make faster decisions, keep teams aligned, and grow
               with clarity.
@@ -154,7 +154,7 @@ function Hero() {
                     <span className="h-3 w-3 rounded-full bg-yellow-400" />
                     <span className="h-3 w-3 rounded-full bg-green-400" />
                   </div>
-                  <p className="text-xs text-gray-400">Companyi dashboard</p>
+                  <p className="text-xs text-gray-400">CompanyI dashboard</p>
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-3">
                   {[
@@ -260,7 +260,7 @@ function Features() {
       icon: Globe2,
       title: "One unified platform",
       description:
-        'Stop juggling spreadsheets and disconnected tools. Every company, employee, and project lives in <span className="font-brand">Companyi</span>.',
+        'Stop juggling spreadsheets and disconnected tools. Every company, employee, and project lives in <span className="font-brand">CompanyI</span>.',
     },
   ];
 
@@ -274,7 +274,7 @@ function Features() {
           </h2>
           <p className="mt-3 text-gray-600">
             From company setup to project delivery,{" "}
-            <span className="font-brand">Companyi</span> gives you a complete
+            <span className="font-brand">CompanyI</span> gives you a complete
             toolset designed for real teams.
           </p>
         </div>
@@ -407,7 +407,7 @@ function Testimonials() {
           {[
             {
               quote:
-                '<span className="font-brand">Companyi</span> replaced three separate tools for us. Having employees, departments, and projects in one place is a game changer.',
+                '<span className="font-brand">CompanyI</span> replaced three separate tools for us. Having employees, departments, and projects in one place is a game changer.',
               author: "Sarah Chen",
               role: "Head of Operations, Meridian",
             },
@@ -480,12 +480,12 @@ function Footer() {
             <Building2 className="h-4 w-4" />
           </div>
           <span className="text-base font-brand font-semibold text-primary">
-            Companyi
+            CompanyI
           </span>
         </div>
         <p className="text-sm text-gray-500">
           © {new Date().getFullYear()}{" "}
-          <span className="font-brand">Companyi</span>. All rights reserved.
+          <span className="font-brand">CompanyI</span>. All rights reserved.
         </p>
       </div>
     </footer>

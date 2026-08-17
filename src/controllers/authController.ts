@@ -7,7 +7,7 @@ import { CustomError } from '../utils/customError';
 import { sendWelcomeEmail, sendPasswordResetEmail } from "../utils/Mail";
 import crypto from "crypto";
 
-dotenv.config();
+dotenv.config({ path: '../.env' });
 
 
 const register = async (
@@ -67,7 +67,7 @@ const login = async (
         const user = await User.findOne({ email }).select("+password email username");
         const loggedInUser = await User.findOne({ email }).select("-createdAt -updatedAt -__v");
         if (!user) {
-            const err = new CustomError("User not found", 404);
+            const err = new CustomError("Email not registered", 404);
             next(err);
             return;
         }

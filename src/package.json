@@ -7,7 +7,7 @@
     "build": "tsc",
     "ejs": "nodemon ejs.js",
     "start": "ts-node server.ts",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/server.ts",
+    "dev": "nodemon --watch '**/*.ts' --exec ts-node server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -39,6 +39,6 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.14"
   }
 }
