@@ -128,110 +128,126 @@ export default function CompaniesPage() {
           {filteredCompanies.map((company) => (
             <div
               key={company._id}
-              className="bg-white border border-border rounded-xl p-6 hover:shadow-lg transition-shadow group"
+              className="group relative bg-white border border-border rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-0.5 transition-all duration-200"
             >
-              <div className="flex items-start justify-between mb-4">
+              <div className="h-2 bg-gradient-to-r from-primary to-primary-light" />
+              
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-5">
+                  <div
+                    className="cursor-pointer flex items-center gap-3 flex-1 min-w-0"
+                    onClick={() => router.push(`/companies/${company._id}`)}
+                  >
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-lg">
+                      {company.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-lg font-semibold text-text truncate group-hover:text-primary transition-colors">
+                        {company.name}
+                      </h3>
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium mt-1 ${
+                          company.isActive
+                            ? "bg-green-50 text-green-700"
+                            : "bg-red-50 text-red-700"
+                        }`}
+                      >
+                        <span className={`h-1.5 w-1.5 rounded-full ${company.isActive ? "bg-green-500" : "bg-red-500"}`} />
+                        {company.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
                 <div
-                  className="cursor-pointer flex-1"
+                  className="cursor-pointer space-y-3 mb-6"
                   onClick={() => router.push(`/companies/${company._id}`)}
                 >
-                  <h3 className="text-lg font-semibold text-text group-hover:text-primary transition-colors">
-                    {company.name}
-                  </h3>
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2 ${
-                      company.isActive
-                        ? "bg-green-50 text-green-700"
-                        : "bg-red-50 text-red-700"
-                    }`}
-                  >
-                    {company.isActive ? "Active" : "Inactive"}
-                  </span>
+                  {company.email && (
+                    <div className="flex items-center gap-3 text-sm text-muted">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-400">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884zM18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                        </svg>
+                      </div>
+                      <span className="truncate">{company.email}</span>
+                    </div>
+                  )}
+                  {company.phone && (
+                    <div className="flex items-center gap-3 text-sm text-muted">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-400">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 3V3z" />
+                        </svg>
+                      </div>
+                      <span>{company.phone}</span>
+                    </div>
+                  )}
+                  {company.address && (
+                    <div className="flex items-start gap-3 text-sm text-muted">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-gray-400 mt-0.5">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <span className="line-clamp-2">{company.address}</span>
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              <div
-                className="cursor-pointer space-y-2 mb-6"
-                onClick={() => router.push(`/companies/${company._id}`)}
-              >
-                {company.email && (
-                  <div className="flex items-center gap-2 text-sm text-muted">
+                <div className="flex gap-2 border-t border-border pt-4">
+                  <button
+                    onClick={() => openEditModal(company)}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 border border-primary text-primary text-sm font-medium rounded-xl hover:bg-primary hover:text-white transition-colors"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-4 w-4"
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
-                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884zM18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                     </svg>
-                    {company.email}
-                  </div>
-                )}
-                {company.phone && (
-                  <div className="flex items-center gap-2 text-sm text-muted">
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => setDeletingId(company._id)}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 border border-red-200 text-red-600 text-sm font-medium rounded-xl hover:bg-red-50 transition-colors"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-4 w-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 3V3z" />
-                    </svg>
-                    {company.phone}
-                  </div>
-                )}
-                {company.address && (
-                  <div className="flex items-start gap-2 text-sm text-muted">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 mt-0.5"
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
                       <path
                         fillRule="evenodd"
-                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
                         clipRule="evenodd"
                       />
                     </svg>
-                    {company.address}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-2 border-t border-border pt-4">
-                <button
-                  onClick={() => openEditModal(company)}
-                  className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 border border-primary text-primary text-sm font-medium rounded-lg hover:bg-primary hover:text-white transition-colors"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                  </svg>
-                  Edit
-                </button>
-                <button
-                  onClick={() => setDeletingId(company._id)}
-                  className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 border border-red-300 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Delete
-                </button>
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           ))}
