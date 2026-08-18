@@ -22,9 +22,6 @@ const updateDepartmentByIdSchema = Joi.object({
     name: Joi.string().trim().messages({
         'string.base': 'Name must be a string'
     }),
-    company: Joi.string().trim().messages({
-        'string.base': 'Company must be a string'
-    }),
     manager: Joi.string().trim().messages({
         'string.base': 'Manager must be a string'
     })

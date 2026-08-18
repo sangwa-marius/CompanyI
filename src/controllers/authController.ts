@@ -112,30 +112,22 @@ const forgotPassword = async (
 
     try {
         const user = await User.findOne({ email });
-        if (!user) {
-            const err = new CustomError("User not found", 404);
-            next(err);
-            return;
+        if (user) {
+            const resetToken = crypto.randomBytes(20).toString('hex');
+            const resetTokenExpires = Date.now() + 10 * 60 * 1000;
+            const resetLink = `${process.env.FRONTEND_URL || `http://localhost:${process.env.PORT}`}/api/auth/reset-password?token=${resetToken}&email=${email}`;
+
+            user.passwordResetToken = resetToken;
+            user.passwordResetExpires = new Date(resetTokenExpires);
+            await user.save();
+
+            const subject = "Password Reset Request";
+            const text = `You requested a password reset. Click the link to reset your password: ${resetLink}`;
+            await sendPasswordResetEmail(email, subject, resetLink);
         }
 
-        const resetToken = crypto.randomBytes(20).toString('hex');
-        const resetTokenExpires = Date.now() + 10 * 60 * 1000;
-        const resetLink = `${process.env.FRONTEND_URL || `http://localhost:${process.env.PORT}`}/api/auth/reset-password?token=${resetToken}&email=${email}`;
-
-        user.passwordResetToken = resetToken;
-        user.passwordResetExpires = new Date(resetTokenExpires);
-        await user.save();
-
-        const subject = "Password Reset Request";
-        const text = `You requested a password reset. Click the link to reset your password: ${resetLink}`;
-        sendPasswordResetEmail(email, subject, resetLink).then(() => {
-            res.status(200).json({
-                message: "Password reset link sent to your email"
-            })
-        }).catch((err) => {
-            const error = new CustomError("Failed to send password reset email", 500);
-            next(error);
-            return;
+        res.status(200).json({
+            message: "If an account with that email exists, we have sent a password reset link"
         })
     } catch (error) {
         const err = new CustomError("An error occurred while processing your request", 500);

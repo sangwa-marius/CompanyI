@@ -32,7 +32,7 @@ const getCompanyDepartments = async (
 
 
 const getDepartmentById = async (
-    req: Request<{ id: string }>,
+    req: any,
     res: Response,
     next: NextFunction
 ) => {
@@ -48,6 +48,11 @@ const getDepartmentById = async (
             .populate('members');
         if (!department) {
             const err: any = new CustomError("No department found", 404);
+            return next(err);
+        }
+        const company = await Company.findOne({ _id: department.company, owner: req.userId });
+        if (!company) {
+            const err: any = new CustomError("Access denied", 403);
             return next(err);
         }
         res.status(200).json({

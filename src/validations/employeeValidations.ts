@@ -37,7 +37,6 @@ const updateEmployeeByIdSchema = Joi.object({
         'string.min': 'phone number must be atleast 10 characters long',
         'string.max': 'phone number must be atmost 13 characters long'
     }),
-    company: Joi.string().trim(),
     department: Joi.string().trim().optional().allow(''),
     status: Joi.string().trim().valid('ACTIVE', 'INACTIVE', 'SUSPENDED'),
     hiredAt: Joi.string().optional().allow('').messages({
