@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sent, setSent] = useState(false);
   const { isLoading } = useAuth();
 
    const handleSubmit = async (e: React.FormEvent) => {
@@ -16,8 +17,7 @@ export default function ForgotPasswordPage() {
      setIsSubmitting(true);
      try {
        await api.post("/auth/forgot-password", { email });
-       toast.success("Reset link sent");
-       setEmail("");
+       setSent(true);
      } catch (error: any) {
        const message = error?.response?.data?.message || "Failed to send reset link";
        if (message.toLowerCase().includes("no user")) {
@@ -44,43 +44,69 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background-alt px-4">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-text">Forgot password</h1>
-          <p className="mt-2 text-muted">
-            Enter your email and we will send you a reset link
-          </p>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-text"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-border px-3 py-2 bg-white text-text shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              placeholder="you@example.com"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full rounded-md bg-primary px-4 py-2 text-white font-medium hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {isSubmitting ? "Sending..." : "Send reset link"}
-          </button>
-        </form>
-        <div className="mt-6 text-center text-sm text-muted">
-          <Link href="/auth/login" className="text-primary hover:underline">
-            Back to sign in
-          </Link>
-        </div>
+        {sent ? (
+          <>
+            <div className="mb-8 text-center">
+              <h1 className="text-2xl font-bold text-text">Check your email</h1>
+              <p className="mt-2 text-muted">
+                We sent a password reset link to <span className="font-medium text-text">{email}</span>.
+              </p>
+            </div>
+            <div className="rounded-md bg-green-50 border border-green-200 p-4 mb-6">
+              <p className="text-sm text-green-800">
+                If an account with that email exists, you will receive a reset link shortly.
+              </p>
+            </div>
+            <div className="text-center text-sm text-muted">
+              <button
+                onClick={() => setSent(false)}
+                className="text-primary hover:underline"
+              >
+                Use a different email
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="mb-8 text-center">
+              <h1 className="text-2xl font-bold text-text">Forgot password</h1>
+              <p className="mt-2 text-muted">
+                Enter your email and we will send you a reset link
+              </p>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-text"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1 block w-full rounded-md border border-border px-3 py-2 bg-white text-text shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                  placeholder="you@example.com"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full rounded-md bg-primary px-4 py-2 text-white font-medium hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isSubmitting ? "Sending..." : "Send reset link"}
+              </button>
+            </form>
+            <div className="mt-6 text-center text-sm text-muted">
+              <Link href="/auth/login" className="text-primary hover:underline">
+                Back to sign in
+              </Link>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
