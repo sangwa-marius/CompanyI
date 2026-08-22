@@ -115,7 +115,7 @@ const forgotPassword = async (
         if (user) {
             const resetToken = crypto.randomBytes(20).toString('hex');
             const resetTokenExpires = Date.now() + 10 * 60 * 1000;
-            const resetLink = `${process.env.FRONTEND_URL || `http://localhost:${process.env.PORT}`}/api/auth/reset-password?token=${resetToken}&email=${email}`;
+            const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/auth/reset-password?token=${resetToken}&email=${email}`;
 
             user.passwordResetToken = resetToken;
             user.passwordResetExpires = new Date(resetTokenExpires);
