@@ -153,13 +153,19 @@ const resetPassword = async (
     }
 
     try {
-        const user = await User.findOne({
-            email: req.query.email,
-            passwordResetToken: req.query.token,
-            passwordResetExpires: { $gt: new Date() }
-        })
+        const user = await User.findOne({ email: req.query.email });
 
-        if (!user) return next(new CustomError("Invalid or expired token", 400));
+        if (!user) {
+            return next(new CustomError("Invalid reset link", 400));
+        }
+
+        if (!user.passwordResetToken || user.passwordResetToken !== req.query.token) {
+            return next(new CustomError("Reset link was already used", 400));
+        }
+
+        if (user.passwordResetExpires && user.passwordResetExpires < new Date()) {
+            return next(new CustomError("Reset link has expired", 400));
+        }
 
         const newPassword = req.body.password;
         if (!newPassword) {
