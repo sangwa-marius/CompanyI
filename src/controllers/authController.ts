@@ -112,22 +112,24 @@ const forgotPassword = async (
 
     try {
         const user = await User.findOne({ email });
-        if (user) {
-            const resetToken = crypto.randomBytes(20).toString('hex');
-            const resetTokenExpires = Date.now() + 10 * 60 * 1000;
-            const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/auth/reset-password?token=${resetToken}&email=${email}`;
-
-            user.passwordResetToken = resetToken;
-            user.passwordResetExpires = new Date(resetTokenExpires);
-            await user.save();
-
-            const subject = "Password Reset Request";
-            const text = `You requested a password reset. Click the link to reset your password: ${resetLink}`;
-            await sendPasswordResetEmail(email, subject, resetLink);
+        if (!user) {
+            return next(new CustomError("No user with that email", 404));
         }
 
+        const resetToken = crypto.randomBytes(20).toString('hex');
+        const resetTokenExpires = Date.now() + 10 * 60 * 1000;
+        const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/auth/reset-password?token=${resetToken}&email=${email}`;
+
+        user.passwordResetToken = resetToken;
+        user.passwordResetExpires = new Date(resetTokenExpires);
+        await user.save();
+
+        const subject = "Password Reset Request";
+        const text = `You requested a password reset. Click the link to reset your password: ${resetLink}`;
+        await sendPasswordResetEmail(email, subject, resetLink);
+
         res.status(200).json({
-            message: "If an account with that email exists, we have sent a password reset link"
+            message: "Password reset link sent to your email"
         })
     } catch (error) {
         const err = new CustomError("An error occurred while processing your request", 500);

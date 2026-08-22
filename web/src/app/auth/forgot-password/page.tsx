@@ -19,7 +19,12 @@ export default function ForgotPasswordPage() {
        toast.success("Reset link sent");
        setEmail("");
      } catch (error: any) {
-       toast.error(error?.response?.data?.message || "Failed to send reset link");
+       const message = error?.response?.data?.message || "Failed to send reset link";
+       if (message.toLowerCase().includes("no user")) {
+         toast.error("No user with that email");
+       } else {
+         toast.error(message);
+       }
      } finally {
        setIsSubmitting(false);
      }
