@@ -7,7 +7,7 @@ import { api } from "@/lib/api";
 import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
 
-type ErrorState = "idle" | "invalid" | "expired" | "used";
+type ErrorState = "idle" | "invalid" | "expired" | "used" | "success";
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
@@ -51,8 +51,7 @@ export default function ResetPasswordPage() {
     setIsSubmitting(true);
     try {
       await api.post(`/auth/reset-password?token=${token}&email=${email}`, { password });
-      toast.success("Password reset successfully");
-      window.location.href = "/auth/login";
+      setErrorState("success");
     } catch (error: any) {
       const message = error?.response?.data?.message || "Failed to reset password";
       setErrorState(getErrorMessage(message));
@@ -69,28 +68,60 @@ export default function ResetPasswordPage() {
         description: "This password reset link is invalid or malformed.",
         cta: "Request a new link",
         ctaHref: "/auth/forgot-password",
+        iconBg: "bg-red-50",
+        iconColor: "text-red-600",
+        icon: (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        ),
       },
       expired: {
         title: "Link Expired",
         description: "This password reset link has expired. For your security, links are only valid for 10 minutes.",
         cta: "Request a new link",
         ctaHref: "/auth/forgot-password",
+        iconBg: "bg-red-50",
+        iconColor: "text-red-600",
+        icon: (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        ),
       },
       used: {
         title: "Link Already Used",
         description: "This password reset link has already been used. If you need to reset your password again, please request a new link.",
         cta: "Request a new link",
         ctaHref: "/auth/forgot-password",
+        iconBg: "bg-red-50",
+        iconColor: "text-red-600",
+        icon: (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+        ),
+      },
+      success: {
+        title: "Password Reset Successful",
+        description: "Your password has been updated. You can now sign in with your new password.",
+        cta: "Go to sign in",
+        ctaHref: "/auth/login",
+        iconBg: "bg-green-50",
+        iconColor: "text-green-600",
+        icon: (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        ),
       },
     }[errorState];
 
     return (
       <div className="flex min-h-screen items-center justify-center bg-background-alt px-4">
         <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
+          <div className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full ${config.iconBg}`}>
+            <div className={config.iconColor}>{config.icon}</div>
           </div>
           <h1 className="text-2xl font-bold text-text">{config.title}</h1>
           <p className="mt-4 text-muted">{config.description}</p>
