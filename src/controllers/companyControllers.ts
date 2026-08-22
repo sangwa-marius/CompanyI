@@ -124,7 +124,7 @@ const updateCompanyById = async (
 }
 
 
-const deletecompanyById = async (
+const deleteCompanyById = async (
     req: any,
     res: Response,
     next: NextFunction
@@ -158,6 +158,6 @@ export {
     getCompany,
     addCompany,
     updateCompanyById,
-    deletecompanyById
+    deleteCompanyById
 
 };

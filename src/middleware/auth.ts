@@ -1,12 +1,14 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import {Response,NextFunction } from 'express';
 
 dotenv.config({ path: '../.env' });
 
-const isauthenticated = async (req: any, res, next) => {
+const isAuthenticated = async (req:any, res:Response, next:NextFunction) => {
     try {
         const authHeaders = req.headers.authorization;
-        if (!authHeaders || !authHeaders.includes("Bearer")) return res.status(401).json({ message: "Invalid token format" })
+        if(!authHeaders) return res.json({"message":"Please login"})
+        if (!authHeaders.startsWith("Bearer")) return res.status(401).json({ message: "Invalid token format" })
         const token = req.headers?.authorization?.split(' ')[1];
         if (!token) {
             res.status(401).json({ message: 'Unauthorized' });
@@ -21,4 +23,4 @@ const isauthenticated = async (req: any, res, next) => {
     }
 };
 
-export default isauthenticated;
+export default isAuthenticated;
