@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Department from '../models/department';
 import Company from '../models/company';
 import { CustomError } from '../utils/customError';
+import Activity from '../models/activity';
 
 const getCompanyDepartments = async (
     req: any,
@@ -77,6 +78,15 @@ const addDepartment = async (req: any, res: Response, next: NextFunction) => {
             company,
             manager
         })
+
+        await Activity.create({
+            user: req.userId,
+            action: "Department Created",
+            entityType: "Department",
+            entityId: newDepartment._id,
+            entityName: newDepartment.name,
+            details: `Department "${newDepartment.name}" was created`
+        });
 
         res.status(201).json({ message: "Department added successfully", newDepartment });
 
