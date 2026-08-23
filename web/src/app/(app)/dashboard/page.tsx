@@ -7,12 +7,19 @@ import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
 import { COLORS } from "@/lib/constants";
 import type { Company, Employee, Department, Project } from "@/types";
+import type { Activity } from "@/types";
 import {
   Building2,
   Users,
   Briefcase,
   FolderTree,
   TrendingUp,
+  UserPlus,
+  FolderOpen,
+  Activity,
+  CalendarDays,
+  X,
+  Loader2,
 } from "lucide-react";
 import {
   BarChart,
@@ -41,6 +48,50 @@ const PIE_COLORS = [
   "#ef4444",
 ];
 
+const ACTIVITY_CONFIG: Record<
+  string,
+  { icon: typeof Activity; color: string; bg: string; label: string }
+> = {
+  Company: {
+    icon: Building2,
+    color: "text-primary",
+    bg: "bg-primary/10",
+    label: "New company added",
+  },
+  Employee: {
+    icon: UserPlus,
+    color: "text-blue-600",
+    bg: "bg-blue-50",
+    label: "New employee joined",
+  },
+  Project: {
+    icon: FolderOpen,
+    color: "text-amber-600",
+    bg: "bg-amber-50",
+    label: "New project created",
+  },
+};
+
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffSeconds < 60) return "Just now";
+  if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes === 1 ? "" : "s"} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isLoading: authLoading } = useAuth();
@@ -50,6 +101,9 @@ export default function DashboardPage() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+  const [allActivities, setAllActivities] = useState<Activity[]>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -183,10 +237,13 @@ export default function DashboardPage() {
   }, [departments]);
 
   const recentActivity = useMemo(() => {
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
     const items: { type: string; name: string; date: string }[] = [];
 
     companies.forEach((c) => {
-      if (c.createdAt) {
+      if (c.createdAt && new Date(c.createdAt) >= twoDaysAgo) {
         items.push({
           type: "Company",
           name: c.name,
@@ -196,7 +253,7 @@ export default function DashboardPage() {
     });
 
     employees.forEach((e) => {
-      if (e.createdAt) {
+      if (e.createdAt && new Date(e.createdAt) >= twoDaysAgo) {
         items.push({
           type: "Employee",
           name: e.names,
@@ -206,7 +263,7 @@ export default function DashboardPage() {
     });
 
     projects.forEach((p) => {
-      if (p.createdAt) {
+      if (p.createdAt && new Date(p.createdAt) >= twoDaysAgo) {
         items.push({
           type: "Project",
           name: p.name,
@@ -227,6 +284,7 @@ export default function DashboardPage() {
       icon: Building2,
       color: "text-primary",
       bg: "bg-primary/10",
+      accent: "border-l-primary",
     },
     {
       label: "Total Employees",
@@ -234,6 +292,7 @@ export default function DashboardPage() {
       icon: Users,
       color: "text-secondary",
       bg: "bg-secondary/10",
+      accent: "border-l-secondary",
     },
     {
       label: "Active Projects",
@@ -241,6 +300,7 @@ export default function DashboardPage() {
       icon: Briefcase,
       color: "text-accent",
       bg: "bg-accent/10",
+      accent: "border-l-accent",
     },
     {
       label: "Departments",
@@ -248,8 +308,29 @@ export default function DashboardPage() {
       icon: FolderTree,
       color: "text-primary",
       bg: "bg-primary/10",
+      accent: "border-l-primary",
     },
   ];
+
+  const today = new Date().toLocaleDateString(undefined, {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const openActivityModal = async () => {
+    setIsActivityModalOpen(true);
+    setActivitiesLoading(true);
+    try {
+      const res = await api.get("/activity/all");
+      setAllActivities(res.data.activities || []);
+    } catch {
+      toast.error("Failed to load activities");
+    } finally {
+      setActivitiesLoading(false);
+    }
+  };
 
   if (authLoading || loading) {
     return (
@@ -269,14 +350,20 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-          Dashboard
-        </h1>
-        <p className="text-muted mt-1">
-          Welcome back, {user?.username || "User"}! Here is an overview of your
-          organization.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            Dashboard
+          </h1>
+          <p className="text-muted mt-1">
+            Welcome back, {user?.username || "User"}! Here is an overview of your
+            organization.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted bg-white border border-border rounded-lg px-3 py-2 shadow-sm">
+          <CalendarDays className="h-4 w-4 text-primary" />
+          <span>{today}</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -285,20 +372,22 @@ export default function DashboardPage() {
           return (
             <div
               key={stat.label}
-              className="bg-white border border-border rounded-xl p-5 shadow-sm"
+              className={`group bg-white border border-border border-l-4 ${stat.accent} rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 cursor-default`}
             >
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-medium text-muted">
                   {stat.label}
                 </span>
-                <div className={`p-2 rounded-lg ${stat.bg}`}>
+                <div
+                  className={`p-2 rounded-lg ${stat.bg} ring-1 ring-inset ring-black/[0.04]`}
+                >
                   <Icon className={`h-5 w-5 ${stat.color}`} />
                 </div>
               </div>
               <p className="text-3xl font-bold text-text">{stat.value}</p>
               <div className="flex items-center gap-1 mt-2 text-sm text-green-600">
                 <TrendingUp className="h-4 w-4" />
-                <span>+12%</span>
+                <span className="font-medium">+12%</span>
                 <span className="text-muted">vs last month</span>
               </div>
             </div>
@@ -319,6 +408,7 @@ export default function DashboardPage() {
                     backgroundColor: COLORS.surface,
                     borderColor: COLORS.border,
                     borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                   }}
                   labelStyle={{ color: COLORS.text }}
                 />
@@ -353,7 +443,14 @@ export default function DashboardPage() {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: COLORS.surface,
+                    borderColor: COLORS.border,
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                  }}
+                />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -376,6 +473,7 @@ export default function DashboardPage() {
                     backgroundColor: COLORS.surface,
                     borderColor: COLORS.border,
                     borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                   }}
                   labelStyle={{ color: COLORS.text }}
                 />
@@ -412,6 +510,7 @@ export default function DashboardPage() {
                     backgroundColor: COLORS.surface,
                     borderColor: COLORS.border,
                     borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                   }}
                   labelStyle={{ color: COLORS.text }}
                 />
@@ -428,83 +527,76 @@ export default function DashboardPage() {
         </GraphCard>
       </div>
 
-      <GraphCard title="Employees by Department">
-        {employeesByDept.length > 0 ? (
-          <ResponsiveContainer width="100%" height={350}>
-            <PieChart>
-              <Pie
-                data={employeesByDept}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) =>
-                  `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`
-                }
-                outerRadius={120}
-                dataKey="value"
-              >
-                {employeesByDept.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={PIE_COLORS[index % PIE_COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+      <GraphCard
+        title={
+          <div className="flex items-center gap-2">
+            <Activity className="h-5 w-5 text-primary" />
+            <span>Recent Activity</span>
+          </div>
+        }
+        footer={
+          <button
+            onClick={openActivityModal}
+            className="inline-flex items-center gap-2 rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/20 transition-colors"
+          >
+            <Activity className="h-4 w-4" />
+            View all activity
+          </button>
+        }
+      >
+        {recentActivity.length > 0 ? (
+          <div className="space-y-3">
+            {recentActivity.map((item, idx) => {
+              const config = ACTIVITY_CONFIG[item.type] || ACTIVITY_CONFIG.Company;
+              const Icon = config.icon;
+              return (
+                <div
+                  key={`${item.type}-${item.name}-${idx}`}
+                  className="group flex items-start gap-4 rounded-lg border border-border bg-white/60 p-4 hover:border-primary/30 hover:shadow-sm transition-all duration-200"
+                >
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${config.bg}`}
+                  >
+                    <Icon className={`h-5 w-5 ${config.color}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-text truncate">
+                      {config.label}
+                    </p>
+                    <p className="text-sm text-muted truncate">{item.name}</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <span className="text-xs text-muted">
+                      {formatRelativeTime(item.date)}
+                    </span>
+                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                      {item.type}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         ) : (
-          <EmptyState text="No department data available" />
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-50">
+              <Activity className="h-6 w-6 text-muted" />
+            </div>
+            <p className="text-muted">No recent activity yet.</p>
+            <p className="text-sm text-muted/80 mt-1">
+              Start by adding companies, employees, or projects.
+            </p>
+          </div>
         )}
       </GraphCard>
 
-      <div className="bg-white border border-border rounded-xl p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-text mb-4">
-          Recent Activity
-        </h2>
-        {recentActivity.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="px-4 py-3 text-left text-sm font-medium text-muted">
-                    Type
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-muted">
-                    Name
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-muted">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentActivity.map((item, idx) => (
-                  <tr
-                    key={`${item.type}-${item.name}-${idx}`}
-                    className="border-b border-border last:border-0"
-                  >
-                    <td className="px-4 py-3">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                        {item.type}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-text font-medium">
-                      {item.name}
-                    </td>
-                    <td className="px-4 py-3 text-muted text-sm">
-                      {new Date(item.date).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p className="text-muted text-center py-8">No recent activity</p>
-        )}
-      </div>
+      {isActivityModalOpen && (
+        <ActivityModal
+          activities={allActivities}
+          loading={activitiesLoading}
+          onClose={() => setIsActivityModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
@@ -512,14 +604,27 @@ export default function DashboardPage() {
 function GraphCard({
   title,
   children,
+  footer,
 }: {
-  title: string;
+  title: string | React.ReactNode;
   children: React.ReactNode;
+  footer?: React.ReactNode;
 }) {
   return (
-    <div className="bg-white border border-border rounded-xl p-6 shadow-sm">
-      <h2 className="text-lg font-semibold text-text mb-4">{title}</h2>
-      {children}
+    <div className="bg-white border border-border rounded-xl shadow-sm overflow-hidden">
+      <div className="border-b border-border px-6 py-4 bg-gray-50/50">
+        {typeof title === "string" ? (
+          <h2 className="text-base font-semibold text-text">{title}</h2>
+        ) : (
+          <div className="flex items-center gap-2">{title}</div>
+        )}
+      </div>
+      <div className="p-6">{children}</div>
+      {footer && (
+        <div className="border-t border-border px-6 py-3 bg-gray-50/30">
+          {footer}
+        </div>
+      )}
     </div>
   );
 }
@@ -527,7 +632,88 @@ function GraphCard({
 function EmptyState({ text }: { text: string }) {
   return (
     <div className="flex items-center justify-center h-[300px]">
-      <p className="text-muted">{text}</p>
+      <p className="text-muted text-sm">{text}</p>
+    </div>
+  );
+}
+
+function ActivityModal({
+  activities,
+  loading,
+  onClose,
+}: {
+  activities: Activity[];
+  loading: boolean;
+  onClose: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="w-full max-w-2xl max-h-[80vh] overflow-hidden rounded-xl bg-white shadow-xl flex flex-col">
+        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+          <h3 className="text-lg font-semibold text-text">All Activities</h3>
+          <button
+            onClick={onClose}
+            className="rounded-lg p-1 text-muted hover:text-text hover:bg-gray-100 transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-6">
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : activities.length > 0 ? (
+            <div className="space-y-3">
+              {activities.map((item, idx) => {
+                const config =
+                  ACTIVITY_CONFIG[item.entityType] || ACTIVITY_CONFIG.Company;
+                const Icon = config.icon;
+                return (
+                  <div
+                    key={`${item._id}-${idx}`}
+                    className="flex items-start gap-4 rounded-lg border border-border bg-white/60 p-4"
+                  >
+                    <div
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${config.bg}`}
+                    >
+                      <Icon className={`h-5 w-5 ${config.color}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-text truncate">
+                        {item.action}
+                      </p>
+                      <p className="text-sm text-muted truncate">
+                        {item.entityName}
+                      </p>
+                      {item.details && (
+                        <p className="text-xs text-muted mt-1 line-clamp-2">
+                          {item.details}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <span className="text-xs text-muted">
+                        {formatRelativeTime(item.createdAt)}
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                        {item.entityType}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-50">
+                <Activity className="h-6 w-6 text-muted" />
+              </div>
+              <p className="text-muted">No activities found.</p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
