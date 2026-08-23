@@ -3,6 +3,7 @@ import Employee from '../models/employees';
 import Company from '../models/company';
 import Department from '../models/department';
 import { CustomError } from '../utils/customError';
+import Activity from '../models/activity';
 
 
 const getCompanyEmployees = async (
@@ -96,6 +97,15 @@ const addEmployee = async (
       status,
       hiredAt: hiredAt || undefined,
       companies: [company]
+    });
+
+    await Activity.create({
+      user: req.userId,
+      action: "Employee Added",
+      entityType: "Employee",
+      entityId: newEmployee._id,
+      entityName: newEmployee.names,
+      details: `Employee "${newEmployee.names}" was added`
     });
 
     if (department) {
