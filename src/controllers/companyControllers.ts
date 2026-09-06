@@ -2,6 +2,7 @@ import Company from '../models/company';
 import { Request, Response, NextFunction } from "express"
 import { CustomError } from '../utils/customError';
 import Employee from "../models/employees"
+import Activity from "../models/activity";
 
 
 const getAllCompanies = async (req: Request, res: Response, next: NextFunction) => {
@@ -88,6 +89,14 @@ const addCompany = async (
                 address,
                 isActive
             })
+            await Activity.create({
+                user: loggedInUserId,
+                action: "Company Created",
+                entityType: "Company",
+                entityId: company._id,
+                entityName: company.name,
+                details: `Company "${company.name}" was created`
+            });
             return res.status(201).json({ message: "Company added successfully", company })
 
         }
@@ -124,7 +133,7 @@ const updateCompanyById = async (
 }
 
 
-const deletecompanyById = async (
+const deleteCompanyById = async (
     req: any,
     res: Response,
     next: NextFunction
@@ -158,6 +167,6 @@ export {
     getCompany,
     addCompany,
     updateCompanyById,
-    deletecompanyById
+    deleteCompanyById
 
 };

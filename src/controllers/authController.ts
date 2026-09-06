@@ -113,14 +113,12 @@ const forgotPassword = async (
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            const err = new CustomError("User not found", 404);
-            next(err);
-            return;
+            return next(new CustomError("No user with that email", 404));
         }
 
         const resetToken = crypto.randomBytes(20).toString('hex');
         const resetTokenExpires = Date.now() + 10 * 60 * 1000;
-        const resetLink = `${process.env.FRONTEND_URL || `http://localhost:${process.env.PORT}`}/api/auth/reset-password?token=${resetToken}&email=${email}`;
+        const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/auth/reset-password?token=${resetToken}&email=${email}`;
 
         user.passwordResetToken = resetToken;
         user.passwordResetExpires = new Date(resetTokenExpires);
@@ -128,14 +126,10 @@ const forgotPassword = async (
 
         const subject = "Password Reset Request";
         const text = `You requested a password reset. Click the link to reset your password: ${resetLink}`;
-        sendPasswordResetEmail(email, subject, resetLink).then(() => {
-            res.status(200).json({
-                message: "Password reset link sent to your email"
-            })
-        }).catch((err) => {
-            const error = new CustomError("Failed to send password reset email", 500);
-            next(error);
-            return;
+        await sendPasswordResetEmail(email, subject, resetLink);
+
+        res.status(200).json({
+            message: "Password reset link sent to your email"
         })
     } catch (error) {
         const err = new CustomError("An error occurred while processing your request", 500);
@@ -159,13 +153,19 @@ const resetPassword = async (
     }
 
     try {
-        const user = await User.findOne({
-            email: req.query.email,
-            passwordResetToken: req.query.token,
-            passwordResetExpires: { $gt: new Date() }
-        })
+        const user = await User.findOne({ email: req.query.email });
 
-        if (!user) return next(new CustomError("Invalid or expired token", 400));
+        if (!user) {
+            return next(new CustomError("Invalid reset link", 400));
+        }
+
+        if (!user.passwordResetToken || user.passwordResetToken !== req.query.token) {
+            return next(new CustomError("Reset link was already used", 400));
+        }
+
+        if (user.passwordResetExpires && user.passwordResetExpires < new Date()) {
+            return next(new CustomError("Reset link has expired", 400));
+        }
 
         const newPassword = req.body.password;
         if (!newPassword) {

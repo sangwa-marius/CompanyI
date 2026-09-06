@@ -4,6 +4,7 @@ import Company from '../models/company';
 import Employee from '../models/employees';
 import { CustomError } from '../utils/customError';
 import mongoose from 'mongoose';
+import Activity from '../models/activity';
 
 const getAllCompanyProjects = async (req: any, res: Response, next: NextFunction) => {
     try {
@@ -87,6 +88,15 @@ const addProject = async (req: any, res: Response, next: NextFunction) => {
         await newProject.populate('company');
         await newProject.populate('manager');
         await newProject.populate('members');
+
+        await Activity.create({
+            user: req.userId,
+            action: "Project Created",
+            entityType: "Project",
+            entityId: newProject._id,
+            entityName: newProject.name,
+            details: `Project "${newProject.name}" was created`
+        });
 
         res.status(201).json({ message: "project added", newProject })
     } catch (e: any) {

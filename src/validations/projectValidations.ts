@@ -11,7 +11,6 @@ const addProjectSchema = Joi.object({
 
 const updateProjectSchema = Joi.object({
     name: Joi.string().trim(),
-    company: Joi.string().trim(),
     manager: Joi.string().trim().optional(),
     members: Joi.array().items(Joi.string()).single().optional(),
     status: Joi.string().trim().valid('PLANNED', 'ONGOING', 'COMPLETED')

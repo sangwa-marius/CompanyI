@@ -131,3 +131,15 @@ export interface ApiResponse<T> {
   data?: T;
   Total?: number;
 }
+
+export interface Activity {
+  _id: string;
+  user: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  entityName: string;
+  details?: string;
+  createdAt: string;
+  updatedAt: string;
+}

@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 app.use(cors({
-    origin: "*",
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
     allowedHeaders: ["Authorization", "Content-Type"],
 }))
 app.use('/api', router)

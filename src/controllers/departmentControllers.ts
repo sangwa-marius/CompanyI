@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Department from '../models/department';
 import Company from '../models/company';
 import { CustomError } from '../utils/customError';
+import Activity from '../models/activity';
 
 const getCompanyDepartments = async (
     req: any,
@@ -32,7 +33,7 @@ const getCompanyDepartments = async (
 
 
 const getDepartmentById = async (
-    req: Request<{ id: string }>,
+    req: any,
     res: Response,
     next: NextFunction
 ) => {
@@ -48,6 +49,11 @@ const getDepartmentById = async (
             .populate('members');
         if (!department) {
             const err: any = new CustomError("No department found", 404);
+            return next(err);
+        }
+        const company = await Company.findOne({ _id: department.company, owner: req.userId });
+        if (!company) {
+            const err: any = new CustomError("Access denied", 403);
             return next(err);
         }
         res.status(200).json({
@@ -72,6 +78,15 @@ const addDepartment = async (req: any, res: Response, next: NextFunction) => {
             company,
             manager
         })
+
+        await Activity.create({
+            user: req.userId,
+            action: "Department Created",
+            entityType: "Department",
+            entityId: newDepartment._id,
+            entityName: newDepartment.name,
+            details: `Department "${newDepartment.name}" was created`
+        });
 
         res.status(201).json({ message: "Department added successfully", newDepartment });
 
