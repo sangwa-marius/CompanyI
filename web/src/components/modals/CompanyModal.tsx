@@ -60,10 +60,9 @@ export default function CompanyModal({
       }
       onSuccess();
       onClose();
-    } catch {
-      toast.error(
-        company ? "Failed to update company" : "Failed to add company",
-      );
+    } catch (error: any) {
+      const message = error?.response?.data?.message || (company ? "Failed to update company" : "Failed to add company");
+      toast.error(message);
     }
   };
 

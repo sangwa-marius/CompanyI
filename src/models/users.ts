@@ -22,6 +22,12 @@ const userSchema = new mongoose.Schema({
     passwordResetToken: String,
     passwordResetExpires: Date,
 
+    plan: {
+        type: String,
+        enum: ['free', 'pro'],
+        default: 'free'
+    }
+
 }, { timestamps: true })
 
 export default mongoose.model('User', userSchema);

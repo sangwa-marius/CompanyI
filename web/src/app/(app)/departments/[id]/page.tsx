@@ -18,9 +18,9 @@ export default function DepartmentDetailPage() {
     try {
       const res = await api.get(`/department/get-department/${id}`);
       setDepartment(res.data.department);
-    } catch (error) {
-      console.error("Failed to fetch department", error);
-      toast.error("Failed to load department");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to load department";
+      toast.error(message);
     } finally {
       setLoading(false);
     }

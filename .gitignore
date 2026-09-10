@@ -42,3 +42,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 *.md
+
+src/scripts
+
+web/.next

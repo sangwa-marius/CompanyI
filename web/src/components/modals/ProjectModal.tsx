@@ -143,10 +143,9 @@ export default function ProjectModal({
       }
       onSuccess();
       onClose();
-    } catch {
-      toast.error(
-        project ? "Failed to update project" : "Failed to add project",
-      );
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to save project";
+      toast.error(message);
     }
   };
 

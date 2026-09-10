@@ -133,10 +133,9 @@ export default function DepartmentModal({
       }
       onSuccess();
       onClose();
-    } catch {
-      toast.error(
-        department ? "Failed to update department" : "Failed to add department",
-      );
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to save department";
+      toast.error(message);
     }
   };
 

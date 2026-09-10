@@ -95,8 +95,9 @@ export default function EmployeesPage() {
       await api.put(`/employee/delete-employee/${id}`);
       toast.success("Employee deleted successfully");
       fetchEmployees();
-    } catch {
-      toast.error("Failed to delete employee");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to delete employee";
+      toast.error(message);
     } finally {
       setDeletingId(null);
     }

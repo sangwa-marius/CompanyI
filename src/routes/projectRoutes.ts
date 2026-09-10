@@ -3,12 +3,13 @@ import * as project from '../controllers/projectController';
 import auth from '../middleware/auth';
 import validate from '../middleware/validator';
 import { addProjectSchema, updateProjectSchema } from '../validations/projectValidations';
+import { checkPlanLimit } from '../middleware/planLimits';
 
 const router = express.Router();
 
 router.get('/get-all-company-projects/:companyId', auth, project.getAllCompanyProjects);
 router.get('/get-project/:id', auth, project.getProjectById);
-router.post('/add-project', auth, validate(addProjectSchema), project.addProject);
+router.post('/add-project', auth, checkPlanLimit('projects'), validate(addProjectSchema), project.addProject);
 router.post('/add-member-to-project/:projectId', auth, project.addMemberToProject);
 router.post('/bulk-add-members/:projectId', auth, project.bulkAddMembersToProject);
 router.put('/update-project/:id', auth, validate(updateProjectSchema), project.updateProjectById);
