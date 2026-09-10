@@ -24,8 +24,9 @@ export default function CompanyDetailPage() {
     try {
       const response = await api.get(`/company/get-company/${companyId}`);
       setCompany(response.data);
-    } catch (_) {
-      toast.error("Failed to fetch company details");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to fetch company details";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -38,8 +39,9 @@ export default function CompanyDetailPage() {
         `/department/get-company-departments/${companyId}`
       );
       setDepartments(response.data.departments || response.data || []);
-    } catch (_) {
-      toast.error("Failed to fetch departments");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to fetch departments";
+      toast.error(message);
     } finally {
       setTabLoading(false);
     }
@@ -50,8 +52,9 @@ export default function CompanyDetailPage() {
     try {
       const response = await api.get(`/employee/get-employees/${companyId}`);
       setEmployees(response.data.employees || []);
-    } catch (_) {
-      toast.error("Failed to fetch employees");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to fetch employees";
+      toast.error(message);
     } finally {
       setTabLoading(false);
     }
@@ -64,8 +67,9 @@ export default function CompanyDetailPage() {
         `/project/get-all-company-projects/${companyId}`
       );
       setProjects(response.data.projects || []);
-    } catch (_) {
-      toast.error("Failed to fetch projects");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to fetch projects";
+      toast.error(message);
     } finally {
       setTabLoading(false);
     }

@@ -45,8 +45,9 @@ export default function CompaniesPage() {
       await api.delete(`/company/delete-company/${id}`);
       toast.success("Company deleted successfully");
       fetchCompanies();
-    } catch (_) {
-      toast.error("Failed to delete company");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to delete company";
+      toast.error(message);
     } finally {
       setDeletingId(null);
     }

@@ -4,10 +4,12 @@ import employeeRoutes from './employeeRoutes';
 import projectRoutes from './projectRoutes';
 import userRoutes from './userRoutes';
 import activityRoutes from './activityRoutes';
+import publicRoutes from './publicRoutes';
 import express from 'express';
 import auth from '../middleware/auth';
 const router = express.Router();
 
+router.use('/public', publicRoutes);
 router.use('/auth', userRoutes);
 router.use(auth);
 router.use('/company', companyRoutes);

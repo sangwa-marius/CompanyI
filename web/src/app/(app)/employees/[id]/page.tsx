@@ -15,8 +15,9 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
       try {
         const response = await api.get<Employee>(`/employee/get-employee/${params.id}`);
         setEmployee(response.data);
-      } catch {
-        toast.error("Failed to fetch employee details");
+      } catch (error: any) {
+        const message = error?.response?.data?.message || "Failed to fetch employee details";
+        toast.error(message);
       } finally {
         setLoading(false);
       }

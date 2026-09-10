@@ -29,9 +29,9 @@ export default function ProjectDetailPage() {
         const empRes = await api.get(`/employee/get-employees/${companyId}`);
         setEmployees(empRes.data.employees || []);
       }
-    } catch (error) {
-      console.error("Failed to fetch project", error);
-      toast.error("Failed to load project");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to load project";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -78,9 +78,9 @@ export default function ProjectDetailPage() {
       toast.success("Members added");
       setSelectedEmployeeIds(new Set());
       fetchProject();
-    } catch (error) {
-      console.error("Failed to add members", error);
-      toast.error("Failed to add members");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to add members";
+      toast.error(message);
     } finally {
       setAddingMembers(false);
     }

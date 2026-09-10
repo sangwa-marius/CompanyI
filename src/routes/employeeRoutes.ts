@@ -3,12 +3,13 @@ import employee from '../controllers/employeeController';
 import auth from '../middleware/auth';
 import validate from '../middleware/validator';
 import { addEmployeeSchema, updateEmployeeByIdSchema } from '../validations/employeeValidations';
+import { checkPlanLimit } from '../middleware/planLimits';
 
 const router = express.Router();
 
 router.get('/get-employees/:company', auth, employee.getCompanyEmployees);
 router.get('/get-employee/:id', auth, employee.getEmployeeById);
-router.post('/add-employee', auth, validate(addEmployeeSchema), employee.addEmployee);
+router.post('/add-employee', auth, checkPlanLimit('employees'), validate(addEmployeeSchema), employee.addEmployee);
 router.put('/update-employee/:id', auth, validate(updateEmployeeByIdSchema), employee.updateEmployeeById)
 router.put('/delete-employee/:id', auth, employee.deleteEmployeeById);
 

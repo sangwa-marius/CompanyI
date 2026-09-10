@@ -59,9 +59,9 @@ export default function DepartmentsPage() {
       await api.delete(`/department/delete-department/${id}`);
       toast.success("Department deleted");
       fetchDepartments();
-    } catch (error) {
-      console.error("Failed to delete department", error);
-      toast.error("Failed to delete department");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Failed to delete department";
+      toast.error(message);
     } finally {
       setDeletingId(null);
     }
