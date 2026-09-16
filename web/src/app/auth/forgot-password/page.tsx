@@ -12,23 +12,24 @@ export default function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
   const { isLoading } = useAuth();
 
-   const handleSubmit = async (e: React.FormEvent) => {
-     e.preventDefault();
-     setIsSubmitting(true);
-     try {
-       await api.post("/auth/forgot-password", { email });
-       setSent(true);
-     } catch (error: any) {
-       const message = error?.response?.data?.message || "Failed to send reset link";
-       if (message.toLowerCase().includes("no user")) {
-         toast.error("No user with that email");
-       } else {
-         toast.error(message);
-       }
-     } finally {
-       setIsSubmitting(false);
-     }
-   };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await api.post("/auth/forgot-password", { email });
+      setSent(true);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message || "Failed to send reset link";
+      if (message.toLowerCase().includes("no user")) {
+        toast.error("No user with that email");
+      } else {
+        toast.error(message);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -49,12 +50,14 @@ export default function ForgotPasswordPage() {
             <div className="mb-8 text-center">
               <h1 className="text-2xl font-bold text-text">Check your email</h1>
               <p className="mt-2 text-muted">
-                We sent a password reset link to <span className="font-medium text-text">{email}</span>.
+                We sent a password reset link to{" "}
+                <span className="font-medium text-text">{email}</span>.
               </p>
             </div>
             <div className="rounded-md bg-green-50 border border-green-200 p-4 mb-6">
               <p className="text-sm text-green-800">
-                If an account with that email exists, you will receive a reset link shortly.
+                If an account with that email exists, you will receive a reset
+                link shortly.
               </p>
             </div>
             <div className="text-center text-sm text-muted">
