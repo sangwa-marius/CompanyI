@@ -28,7 +28,9 @@ export default function BrandLogo({
         />
       </svg>
       {!compact && (
-        <span className={`font-brand text-[1.35rem] tracking-[-0.045em] ${light ? "text-white" : "text-primary"}`}>
+        <span
+          className={`font-brand text-[1.35rem] tracking-[-0.045em] ${light ? "text-white" : "text-primary"}`}
+        >
           CompanyI
         </span>
       )}
