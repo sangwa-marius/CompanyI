@@ -134,7 +134,8 @@ export default function DepartmentModal({
       onSuccess();
       onClose();
     } catch (error: any) {
-      const message = error?.response?.data?.message || "Failed to save department";
+      const message =
+        error?.response?.data?.message || "Failed to save department";
       toast.error(message);
     }
   };
