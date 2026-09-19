@@ -144,7 +144,8 @@ export default function EmployeeModal({
       onSuccess();
       onClose();
     } catch (error: any) {
-      const message = error?.response?.data?.message || "Failed to save employee";
+      const message =
+        error?.response?.data?.message || "Failed to save employee";
       toast.error(message);
     }
   };

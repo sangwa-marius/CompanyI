@@ -144,7 +144,8 @@ export default function ProjectModal({
       onSuccess();
       onClose();
     } catch (error: any) {
-      const message = error?.response?.data?.message || "Failed to save project";
+      const message =
+        error?.response?.data?.message || "Failed to save project";
       toast.error(message);
     }
   };
