@@ -12,6 +12,5 @@ router.get('/get-your-companies', company.getYourCompanies)
 router.get('/get-company/:id', company.getCompany);
 router.post('/add-company', checkPlanLimit('companies'), validate(addCompanySchema), company.addCompany);
 router.put('/update-company/:id', validate(updateCompanyByIdSchema), company.updateCompanyById);
-router.delete('/delete-company/:id', company.deletecompanyById);
 
 export default router;
