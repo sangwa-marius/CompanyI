@@ -1,24 +1,31 @@
-import * as Joi from 'joi';
+import * as Joi from 'joi'
 
 const regiseterSchema = Joi.object({
   username: Joi.string().required().trim(),
-  password: Joi.string().required().trim().min(8).max(30).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/).messages({
-    'string.min': 'Password must be at least 8 characters',
-    'string.max': 'Password must not exceed 30 characters',
-    'string.pattern.base': 'Password must contain uppercase, lowercase, and a number',
-    'any.required': 'Password is required'
-  }),
+  password: Joi.string()
+    .required()
+    .trim()
+    .min(8)
+    .max(30)
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/)
+    .messages({
+      'string.min': 'Password must be at least 8 characters',
+      'string.max': 'Password must not exceed 30 characters',
+      'string.pattern.base':
+        'Password must contain uppercase, lowercase, and a number',
+      'any.required': 'Password is required'
+    }),
   email: Joi.string().email().required()
-});
+})
 
 const loginSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().required()
-});
+})
 
 const forgotPasswordSchema = Joi.object({
   email: Joi.string().email().required()
-});
+})
 
-export { regiseterSchema, loginSchema, forgotPasswordSchema };
-export default regiseterSchema;
+export { regiseterSchema, loginSchema, forgotPasswordSchema }
+export default regiseterSchema
