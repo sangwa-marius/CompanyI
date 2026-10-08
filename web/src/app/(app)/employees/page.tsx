@@ -7,7 +7,7 @@ import type { Company, Employee, EmployeeStatus } from "@/types";
 import EmployeeModal from "@/components/modals/EmployeeModal";
 import ConfirmDialog from "@/components/modals/ConfirmDialog";
 import { toast } from "react-hot-toast";
-import { Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Pencil, Trash2, ChevronLeft, ChevronRight, Plus, Search, Users } from "lucide-react";
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -109,29 +109,23 @@ export default function EmployeesPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-text">Employees</h1>
+    <div className="mx-auto max-w-7xl">
+      <div className="mb-8 flex items-end justify-between gap-4">
+        <div><p className="text-[10px] font-bold uppercase tracking-[.14em] text-primary">People</p><h1 className="mt-1 text-3xl font-bold tracking-[-.04em] text-[#17251b]">Employees</h1><p className="mt-1 text-sm text-muted">A complete view of your organization&apos;s people.</p></div>
         <button
           onClick={handleAddEmployee}
-          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors"
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 hover:bg-primary-dark"
         >
-          Add Employee
+          <Plus className="h-4 w-4" /> Add Employee
         </button>
       </div>
 
-      <div className="flex gap-4 mb-4">
-        <input
-          type="text"
-          placeholder="Search by name or email..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-           className="flex-1 px-3 py-2 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary"
-        />
+      <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-[#e0e8e1] bg-white p-3 shadow-soft sm:flex-row">
+        <div className="relative flex-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" /><input type="text" placeholder="Search by name or email..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full rounded-xl border border-[#e2e9e3] bg-[#f9fbf9] py-2.5 pl-10 pr-3 text-sm text-text outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10" /></div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as EmployeeStatus | "")}
-          className="px-3 py-2 border border-border rounded-lg bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary"
+          className="rounded-xl border border-[#e2e9e3] bg-[#f9fbf9] px-3 py-2.5 text-sm text-text outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
         >
           <option value="">All Statuses</option>
           <option value="ACTIVE">Active</option>
@@ -141,25 +135,25 @@ export default function EmployeesPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-8">Loading...</div>
+        <div className="flex min-h-[260px] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /></div>
       ) : (
         <>
-          <table className="w-full bg-surface border border-border rounded-lg overflow-hidden">
-            <thead className="bg-background-alt">
+          <div className="overflow-hidden rounded-2xl border border-[#e0e8e1] bg-white shadow-soft"><div className="flex items-center gap-2 border-b border-[#edf1ed] px-5 py-4 text-sm text-muted"><Users className="h-4 w-4 text-primary" />{filteredEmployees.length} team members</div><div className="overflow-x-auto"><table className="w-full min-w-[760px]">
+            <thead className="bg-[#f8faf8]">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium text-text">Name</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-text">Email</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-text">Department</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-text">Companies</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-text">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-text">Hire Date</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-text">Actions</th>
+                <th className="px-5 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-muted">Name</th>
+                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-muted">Email</th>
+                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-muted">Department</th>
+                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-muted">Companies</th>
+                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-muted">Status</th>
+                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-muted">Hire Date</th>
+                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-muted">Actions</th>
               </tr>
             </thead>
             <tbody>
               {paginatedEmployees.map((employee) => (
-                <tr key={employee._id} className="border-t border-border">
-                  <td className="px-4 py-3 text-text">{employee.names}</td>
+                <tr key={employee._id} className="border-t border-[#edf1ed] transition-colors hover:bg-[#f8fbf8]">
+                  <td className="px-5 py-3.5 font-semibold text-[#26362a]">{employee.names}</td>
                   <td className="px-4 py-3 text-text">{employee.email}</td>
                   <td className="px-4 py-3 text-text">
                     {typeof employee.department === "string"
@@ -200,7 +194,7 @@ export default function EmployeesPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div></div>
 
           {filteredEmployees.length > pageSize && (
             <div className="flex items-center justify-between border-t border-border pt-4">

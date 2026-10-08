@@ -10,7 +10,7 @@ export default function BrandLogo({
   className = "",
 }: BrandLogoProps) {
   return (
-    <div className={`inline-flex items-center gap-2.5 ${className}`}>
+    <div className={`brand-logo inline-flex items-center gap-2.5 ${light ? "text-white" : "text-primary"} ${className}`}>
       <svg
         viewBox="0 0 40 40"
         fill="none"

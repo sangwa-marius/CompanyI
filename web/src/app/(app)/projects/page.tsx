@@ -146,23 +146,23 @@ export default function ProjectsPage() {
   };
 
   if (loading) {
-    return <p className="text-gray-500">Loading...</p>;
+    return <div className="flex min-h-[260px] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /></div>;
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <div><h1 className="text-2xl font-bold text-gray-900">Projects</h1><p className="mt-1 text-sm text-muted">Drag a project between columns to update its status.</p></div>
+    <div className="mx-auto max-w-7xl">
+      <div className="mb-8 flex items-end justify-between gap-4">
+        <div><p className="text-[10px] font-bold uppercase tracking-[.14em] text-primary">Delivery</p><h1 className="mt-1 text-3xl font-bold tracking-[-.04em] text-[#17251b]">Projects</h1><p className="mt-1 text-sm text-muted">Drag a project between columns to update its status.</p></div>
         <button
           onClick={openAdd}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 hover:bg-primary-dark"
         >
           <Plus size={18} />
           Add Project
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {columns.map((column) => {
           const columnProjects = projects.filter(
             (p) => p.status === column.status
@@ -181,12 +181,12 @@ export default function ProjectsPage() {
                 }
               }}
               onDrop={(event) => handleDrop(event, column.status)}
-              className={`min-h-[360px] rounded-xl border p-4 transition-colors ${dropTarget === column.status ? "border-primary bg-primary/5 ring-2 ring-primary/15" : "border-gray-200 bg-gray-50"}`}
+              className={`project-column min-h-[440px] rounded-2xl border p-4 transition-colors ${dropTarget === column.status ? "border-primary bg-primary/5 ring-2 ring-primary/15" : "border-[#dfe8e1] bg-[#f8faf8]"}`}
             >
-              <div className="mb-4 flex items-center justify-between"><h2 className="font-semibold text-gray-700">{column.label}</h2><span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-muted shadow-sm">{columnProjects.length}</span></div>
+              <div className="mb-4 flex items-center justify-between"><h2 className="font-bold tracking-tight text-[#26362a]">{column.label}</h2><span className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-muted shadow-sm">{columnProjects.length}</span></div>
               <div className="space-y-3">
                 {columnProjects.length === 0 && (
-                  <p className="rounded-lg border border-dashed border-gray-200 bg-white/60 px-3 py-6 text-center text-sm text-gray-400">Drop a project here</p>
+                  <p className="project-empty rounded-lg border border-dashed border-gray-200 bg-white/60 px-3 py-6 text-center text-sm text-gray-400">Drop a project here</p>
                 )}
                 {columnProjects.map((project) => (
                   <div
@@ -202,10 +202,10 @@ export default function ProjectsPage() {
                       setDropTarget(null);
                     }}
                     onClick={() => router.push(`/projects/${project._id}`)}
-                    className={`relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer ${draggedProjectId === project._id ? "opacity-50 scale-[.98]" : ""} ${updatingProjectId === project._id ? "pointer-events-none opacity-60" : ""}`}
+                    className={`project-card relative cursor-pointer rounded-xl border border-[#e0e8e1] bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-soft ${draggedProjectId === project._id ? "scale-[.98] opacity-50" : ""} ${updatingProjectId === project._id ? "pointer-events-none opacity-60" : ""}`}
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <div className="flex min-w-0 items-start gap-1"><GripVertical size={16} className="mt-0.5 shrink-0 text-gray-300" /><h3 className="font-medium text-gray-900">{project.name}</h3></div>
+                      <div className="flex min-w-0 items-start gap-1"><GripVertical size={16} className="mt-0.5 shrink-0 text-gray-300" /><h3 className="font-semibold text-[#26362a]">{project.name}</h3></div>
                       <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => openEdit(project)}

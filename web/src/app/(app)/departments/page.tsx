@@ -92,12 +92,12 @@ export default function DepartmentsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Departments</h1>
+    <div className="mx-auto max-w-7xl">
+      <div className="mb-8 flex items-end justify-between gap-4">
+        <div><p className="text-[10px] font-bold uppercase tracking-[.14em] text-primary">Organization</p><h1 className="mt-1 text-3xl font-bold tracking-[-.04em] text-[#17251b]">Departments</h1><p className="mt-1 text-sm text-muted">Structure teams and keep ownership clear.</p></div>
         <button
           onClick={openAdd}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 hover:bg-primary-dark"
         >
           <Plus size={18} />
           Add Department
@@ -105,37 +105,37 @@ export default function DepartmentsPage() {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">Loading...</p>
+        <div className="flex min-h-[260px] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /></div>
       ) : departments.length === 0 ? (
-        <p className="text-gray-500">No departments found.</p>
+        <div className="rounded-2xl border border-dashed border-[#dce6de] bg-white py-20 text-center text-muted">No departments found. Add your first department to get started.</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {departments.map((dept) => (
             <div
               key={dept._id}
               onClick={() => router.push(`/departments/${dept._id}`)}
-              className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer"
+              className="group cursor-pointer rounded-2xl border border-[#e0e8e1] bg-white p-5 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-panel"
             >
               <div className="flex items-start justify-between mb-3">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-bold tracking-tight text-[#17251b] group-hover:text-primary">
                   {dept.name}
                 </h3>
                 <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                   <button
                     onClick={() => openEdit(dept)}
-                    className="p-1.5 text-gray-500 hover:text-primary hover:bg-green-50 rounded"
+                    className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-primary/10 hover:text-primary"
                   >
                     <Pencil size={16} />
                   </button>
                   <button
                     onClick={() => setDeletingId(dept._id)}
-                    className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded"
+                    className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
                   >
                     <Trash2 size={16} />
                   </button>
                 </div>
               </div>
-              <div className="space-y-2 text-sm text-gray-600">
+              <div className="space-y-2.5 border-t border-[#edf1ed] pt-4 text-sm text-[#637066]">
                 {getManagerName(dept.manager) && (
                   <div className="flex items-center gap-2">
                     <Users size={14} />

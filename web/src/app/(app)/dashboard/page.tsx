@@ -13,17 +13,14 @@ import {
   Users,
   Briefcase,
   FolderTree,
-  TrendingUp,
   UserPlus,
   FolderOpen,
-  Activity,
+  Activity as ActivityIcon,
   CalendarDays,
   X,
   Loader2,
 } from "lucide-react";
 import {
-  BarChart,
-  Bar,
   PieChart,
   Pie,
   Cell,
@@ -37,20 +34,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const PIE_COLORS = [
-  "#166534",
-  "#16a34a",
-  "#22c55e",
-  "#4ade80",
-  "#86efac",
-  "#f59e0b",
-  "#3b82f6",
-  "#ef4444",
-];
-
 const ACTIVITY_CONFIG: Record<
   string,
-  { icon: typeof Activity; color: string; bg: string; label: string }
+  { icon: typeof ActivityIcon; color: string; bg: string; label: string }
 > = {
   Company: {
     icon: Building2,
@@ -119,10 +105,8 @@ export default function DashboardPage() {
         const companiesList: Company[] = companiesRes.data.companies || [];
         setCompanies(companiesList);
 
-        const companiesToFetch = companiesList.slice(0, 5);
-
         const results = await Promise.allSettled(
-          companiesToFetch.map(async (company) => {
+          companiesList.map(async (company) => {
             const [empRes, deptRes, projRes] = await Promise.all([
               api.get(`/employee/get-employees/${company._id}`).catch(() => ({
                 data: { employees: [] },
@@ -174,9 +158,7 @@ export default function DashboardPage() {
 
   const totalCompanies = companies.length;
   const totalEmployees = employees.length;
-  const activeProjects = projects.filter(
-    (p) => p.status === "ONGOING" || p.status === "COMPLETED"
-  ).length;
+  const activeProjects = projects.filter((p) => p.status === "ONGOING").length;
   const totalDepartments = departments.length;
 
   const employeesByCompany = useMemo(() => {
@@ -205,16 +187,22 @@ export default function DashboardPage() {
   }, [projects]);
 
   const companyGrowthData = useMemo(() => {
-    const base = Math.max(1, totalCompanies - 3);
-    return [
-      { month: "Jan", companies: Math.max(1, base) },
-      { month: "Feb", companies: Math.max(1, base + 1) },
-      { month: "Mar", companies: Math.max(1, base + 1) },
-      { month: "Apr", companies: totalCompanies },
-      { month: "May", companies: totalCompanies },
-      { month: "Jun", companies: totalCompanies },
-    ];
-  }, [totalCompanies]);
+    const months = Array.from({ length: 6 }, (_, index) => {
+      const month = new Date();
+      month.setDate(1);
+      month.setHours(0, 0, 0, 0);
+      month.setMonth(month.getMonth() - (5 - index));
+      return month;
+    });
+    return months.map((month) => ({
+      month: month.toLocaleDateString("en-US", { month: "short" }),
+      companies: companies.filter((company) => {
+        if (!company.createdAt) return false;
+        const createdAt = new Date(company.createdAt);
+        return createdAt.getFullYear() === month.getFullYear() && createdAt.getMonth() === month.getMonth();
+      }).length,
+    }));
+  }, [companies]);
 
   const deptEmployeeData = useMemo(() => {
     return departments
@@ -223,17 +211,6 @@ export default function DashboardPage() {
         employees: d.members?.length || 0,
       }))
       .sort((a, b) => b.employees - a.employees);
-  }, [departments]);
-
-  const employeesByDept = useMemo(() => {
-    const map: Record<string, number> = {};
-    departments.forEach((d) => {
-      map[d.name] = d.members?.length || 0;
-    });
-    return Object.entries(map).map(([name, value]) => ({
-      name,
-      value,
-    }));
   }, [departments]);
 
   const recentActivity = useMemo(() => {
@@ -385,11 +362,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <p className="text-3xl font-bold text-text">{stat.value}</p>
-              <div className="flex items-center gap-1 mt-2 text-sm text-green-600">
-                <TrendingUp className="h-4 w-4" />
-                <span className="font-medium">+12%</span>
-                <span className="text-muted">vs last month</span>
-              </div>
+              <p className="mt-2 text-xs text-muted">Current workspace total</p>
             </div>
           );
         })}
@@ -399,7 +372,7 @@ export default function DashboardPage() {
         <GraphCard title="Employees by Company">
           {employeesByCompany.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={employeesByCompany}>
+              <LineChart data={employeesByCompany}>
                 <CartesianGrid strokeDasharray="3 3" stroke={COLORS.border} />
                 <XAxis dataKey="name" stroke={COLORS.muted} fontSize={12} />
                 <YAxis stroke={COLORS.muted} fontSize={12} />
@@ -412,12 +385,15 @@ export default function DashboardPage() {
                   }}
                   labelStyle={{ color: COLORS.text }}
                 />
-                <Bar
+                <Line
+                  type="monotone"
                   dataKey="employees"
-                  fill={COLORS.primary}
-                  radius={[4, 4, 0, 0]}
+                  stroke={COLORS.primary}
+                  strokeWidth={3}
+                  dot={{ fill: COLORS.primary, r: 4, strokeWidth: 0 }}
+                  activeDot={{ r: 6 }}
                 />
-              </BarChart>
+              </LineChart>
             </ResponsiveContainer>
           ) : (
             <EmptyState text="No employee data available" />
@@ -461,8 +437,8 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GraphCard title="Company Growth">
-          {totalCompanies > 0 ? (
+        <GraphCard title="Companies created over time">
+          {companyGrowthData.some((item) => item.companies > 0) ? (
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={companyGrowthData}>
                 <CartesianGrid strokeDasharray="3 3" stroke={COLORS.border} />
@@ -488,23 +464,17 @@ export default function DashboardPage() {
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <EmptyState text="No company data available" />
+            <EmptyState text="No dated company records available" />
           )}
         </GraphCard>
 
-        <GraphCard title="Department Employee Count">
+        <GraphCard title="Department size">
           {deptEmployeeData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={deptEmployeeData} layout="vertical">
+              <LineChart data={deptEmployeeData}>
                 <CartesianGrid strokeDasharray="3 3" stroke={COLORS.border} />
-                <XAxis type="number" stroke={COLORS.muted} fontSize={12} />
-                <YAxis
-                  dataKey="name"
-                  type="category"
-                  stroke={COLORS.muted}
-                  fontSize={12}
-                  width={120}
-                />
+                <XAxis dataKey="name" stroke={COLORS.muted} fontSize={12} />
+                <YAxis stroke={COLORS.muted} fontSize={12} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: COLORS.surface,
@@ -514,12 +484,15 @@ export default function DashboardPage() {
                   }}
                   labelStyle={{ color: COLORS.text }}
                 />
-                <Bar
+                <Line
+                  type="monotone"
                   dataKey="employees"
-                  fill={COLORS.secondary}
-                  radius={[0, 4, 4, 0]}
+                  stroke={COLORS.secondary}
+                  strokeWidth={3}
+                  dot={{ fill: COLORS.secondary, r: 4, strokeWidth: 0 }}
+                  activeDot={{ r: 6 }}
                 />
-              </BarChart>
+              </LineChart>
             </ResponsiveContainer>
           ) : (
             <EmptyState text="No department data available" />
@@ -530,7 +503,7 @@ export default function DashboardPage() {
       <GraphCard
         title={
           <div className="flex items-center gap-2">
-            <Activity className="h-5 w-5 text-primary" />
+            <ActivityIcon className="h-5 w-5 text-primary" />
             <span>Recent Activity</span>
           </div>
         }
@@ -539,7 +512,7 @@ export default function DashboardPage() {
             onClick={openActivityModal}
             className="inline-flex items-center gap-2 rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/20 transition-colors"
           >
-            <Activity className="h-4 w-4" />
+            <ActivityIcon className="h-4 w-4" />
             View all activity
           </button>
         }
@@ -580,7 +553,7 @@ export default function DashboardPage() {
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-50">
-              <Activity className="h-6 w-6 text-muted" />
+              <ActivityIcon className="h-6 w-6 text-muted" />
             </div>
             <p className="text-muted">No recent activity yet.</p>
             <p className="text-sm text-muted/80 mt-1">
@@ -612,7 +585,7 @@ function GraphCard({
 }) {
   return (
     <div className="bg-white border border-border rounded-xl shadow-sm overflow-hidden">
-      <div className="border-b border-border px-6 py-4 bg-gray-50/50">
+      <div className="dashboard-card-header border-b border-border px-6 py-4">
         {typeof title === "string" ? (
           <h2 className="text-base font-semibold text-text">{title}</h2>
         ) : (
@@ -621,7 +594,7 @@ function GraphCard({
       </div>
       <div className="p-6">{children}</div>
       {footer && (
-        <div className="border-t border-border px-6 py-3 bg-gray-50/30">
+        <div className="dashboard-card-footer border-t border-border px-6 py-3">
           {footer}
         </div>
       )}
@@ -707,7 +680,7 @@ function ActivityModal({
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-50">
-                <Activity className="h-6 w-6 text-muted" />
+                <ActivityIcon className="h-6 w-6 text-muted" />
               </div>
               <p className="text-muted">No activities found.</p>
             </div>

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -25,6 +27,11 @@
 :root {
   --background: #f6f8f6;
   --foreground: #142019;
+}
+
+.dark {
+  --background: #0e1710;
+  --foreground: #e6eee7;
 }
 
 body {
@@ -106,6 +113,80 @@ body {
 .animate-float { animation: float 6s ease-in-out infinite; }
 .animate-float-delayed { animation: float 7s ease-in-out 1.5s infinite; }
 .animate-pulse-ring { animation: pulse-ring 2.6s ease-out infinite; }
+
+/* Theme surface layer: older screens use a mix of token and utility-based colors. */
+.dark body { background: #0e1710; color: #e6eee7; }
+.dark .bg-white,
+.dark .bg-surface { background-color: #162119 !important; }
+.dark .bg-background-alt,
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-gray-200,
+.dark [class*="bg-[#f5f7f5]"]:not([class*="hover:bg-"]),
+.dark [class*="bg-[#f8faf8]"]:not([class*="hover:bg-"]),
+.dark [class*="bg-[#f9fbf9]"]:not([class*="hover:bg-"]),
+.dark [class*="bg-[#fbfdfb]"]:not([class*="hover:bg-"]),
+.dark [class*="bg-[#f7faf7]"]:not([class*="hover:bg-"]),
+.dark [class*="bg-[#f1f5f1]"]:not([class*="hover:bg-"]) { background-color: #101a13 !important; }
+.dark [class*="bg-[#f1f7f2]"]:not([class*="hover:bg-"]),
+.dark [class*="bg-[#f4f8f4]"]:not([class*="hover:bg-"]),
+.dark [class*="bg-[#f5f9f5]"]:not([class*="hover:bg-"]),
+.dark [class*="bg-[#f8fbf8]"]:not([class*="hover:bg-"]) { background-color: #1b2a1e !important; }
+.dark .border-border,
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark [class*="border-[#"] { border-color: #2b3b2e !important; }
+.dark .text-text,
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark [class*="text-[#17251b]"],
+.dark [class*="text-[#26362a]"],
+.dark [class*="text-[#354439]"],
+.dark [class*="text-[#132219]"] { color: #e6eee7 !important; }
+.dark .text-muted,
+.dark .text-gray-300,
+.dark .text-gray-400,
+.dark .text-gray-500,
+.dark .text-gray-600,
+.dark .text-gray-700,
+.dark [class*="text-[#5e6c62]"],
+.dark [class*="text-[#556258]"],
+.dark [class*="text-[#637066]"],
+.dark [class*="text-[#68756c]"],
+.dark [class*="text-[#78857c]"],
+.dark [class*="text-[#819087]"],
+.dark [class*="text-[#849087]"],
+.dark [class*="text-[#9aa69d]"] { color: #b4c1b7 !important; }
+.dark .brand-logo,
+.dark .brand-logo .text-primary { color: #4ade80 !important; }
+.dark .brand-logo.text-white,
+.dark .brand-logo .text-white { color: #f0fdf4 !important; }
+.dark input,
+.dark select,
+.dark textarea { background-color: #101a13 !important; border-color: #344438 !important; color: #e6eee7 !important; }
+.dark input::placeholder,
+.dark textarea::placeholder { color: #738177 !important; }
+.dark .shadow-soft,
+.dark .shadow-panel { box-shadow: 0 18px 45px -22px rgba(0, 0, 0, .75); }
+.dark .noise-grid { opacity: .36; }
+.dark .recharts-default-tooltip { background: #162119 !important; border-color: #344438 !important; border-radius: 10px !important; }
+.dark .recharts-tooltip-label,
+.dark .recharts-tooltip-item,
+.dark .recharts-text { fill: #cbd7ce !important; color: #cbd7ce !important; }
+.dark .recharts-cartesian-grid line { stroke: #2c3c2f !important; }
+.dark .recharts-legend-item-text { color: #cbd7ce !important; }
+.dark kbd { background: #1d2b20 !important; border-color: #3a4b3e !important; color: #b4c1b7 !important; }
+.dark .bg-black\/50 { background-color: rgba(0, 0, 0, .66) !important; }
+.dark .app-sidebar { background: #101a13 !important; border-color: #28392c !important; }
+.dark .sidebar-nav-item:not(.bg-primary) { background: transparent !important; }
+.dark .sidebar-nav-item:not(.bg-primary):hover { background: #1c2c20 !important; }
+.dark .project-column { background: #111c14 !important; border-color: #2b3d2f !important; }
+.dark .project-column.bg-primary\/5 { background: rgba(22, 101, 52, .18) !important; }
+.dark .project-empty { background: transparent !important; border-color: #384a3c !important; color: #9caba0 !important; }
+.dark .project-card { background: #18251b !important; border-color: #304235 !important; }
+.dark .dashboard-card-header { background: #18251b !important; border-color: #2b3b2e !important; }
+.dark .dashboard-card-footer { background: #142018 !important; border-color: #2b3b2e !important; }
+.dark ::selection { background: #166534; color: #f0fdf4; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }

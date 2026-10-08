@@ -87,7 +87,7 @@ export default function DashboardLayout({
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-[276px] flex-col border-r border-[#e2e9e3] bg-white text-[#17251b] shadow-xl shadow-emerald-950/[.05] transform transition-transform duration-300 ease-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto ${
+        className={`app-sidebar fixed inset-y-0 left-0 z-50 flex w-[276px] flex-col border-r border-[#e2e9e3] bg-white text-[#17251b] shadow-xl shadow-emerald-950/[.05] transform transition-transform duration-300 ease-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -114,7 +114,7 @@ export default function DashboardLayout({
                 key={item.href}
                 href={item.href}
                 onClick={() => setSidebarOpen(false)}
-                className={`group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200 ${
+                className={`sidebar-nav-item group flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200 ${
                   isActive
                     ? "bg-primary text-white shadow-md shadow-primary/20"
                     : "text-[#68756c] hover:bg-[#f1f7f2] hover:text-primary"
