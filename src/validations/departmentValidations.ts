@@ -1,33 +1,30 @@
-import * as Joi from 'joi';
+import * as Joi from 'joi'
 
 const addDepartmentSchema = Joi.object({
-    name: Joi.string().trim().required().messages({
-        'string.base': 'Name must be a string',
-        'string.empty': 'Name cannot be empty',
-        'any.required': 'Name is required'
-    }),
+  name: Joi.string().trim().required().messages({
+    'string.base': 'Name must be a string',
+    'string.empty': 'Name cannot be empty',
+    'any.required': 'Name is required'
+  }),
 
-    company: Joi.string().trim().required().messages({
-        'string.base': 'Company must be a string',
-        'string.empty': 'Company cannot be empty',
-        'any.required': 'Company is required'
-    }),
+  company: Joi.string().trim().required().messages({
+    'string.base': 'Company must be a string',
+    'string.empty': 'Company cannot be empty',
+    'any.required': 'Company is required'
+  }),
 
-    manager: Joi.string().trim().optional().messages({
-        'string.base': 'Manager must be a string'
-    })
-});
+  manager: Joi.string().trim().optional().messages({
+    'string.base': 'Manager must be a string'
+  })
+})
 
 const updateDepartmentByIdSchema = Joi.object({
-    name: Joi.string().trim().messages({
-        'string.base': 'Name must be a string'
-    }),
-    manager: Joi.string().trim().messages({
-        'string.base': 'Manager must be a string'
-    })
-}).min(1);
+  name: Joi.string().trim().messages({
+    'string.base': 'Name must be a string'
+  }),
+  manager: Joi.string().trim().messages({
+    'string.base': 'Manager must be a string'
+  })
+}).min(1)
 
-export {
-    updateDepartmentByIdSchema,
-    addDepartmentSchema
-};
+export { updateDepartmentByIdSchema, addDepartmentSchema }
